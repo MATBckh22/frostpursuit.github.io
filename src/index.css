@@ -1682,7 +1682,7 @@ ul {
     line-height: 1.7;
     color: var(--dark-70);
     margin: 0 0 var(--space-md) 0;
-    max-width: 280px;
+    max-width: 400px;
 }
 
 .redstone-current-label {

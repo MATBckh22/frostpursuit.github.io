@@ -8,9 +8,10 @@ interface HeroProps {
 const CELL_SIZE = 50; // Fixed 50x50 pixel squares
 
 export function Hero({
-    backgroundImage = '/images/main cover.png',
+    backgroundImage = '/images/main render.jpg',
     logoSrc = '/images/logo 2.png'
 }: HeroProps) {
+    const [isLoading, setIsLoading] = useState(true);
     const [isTextHidden, setIsTextHidden] = useState(false);
     const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
     const [gridDimensions, setGridDimensions] = useState({ cols: 0, rows: 0 });
@@ -107,18 +108,45 @@ export function Hero({
 
     return (
         <section
-            className="hero"
+            className={`hero ${isLoading ? 'loading' : 'loaded'}`}
             id="hero"
             ref={heroRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
+            {/* Loading overlay */}
+            {isLoading && (
+                <div className="hero-loading">
+                    <div className="loading-spinner"></div>
+                    <span className="loading-text">Loading Frost Pursuit...</span>
+                </div>
+            )}
             <div className="hero-bg">
-                <img src={backgroundImage} alt="Frost Pursuit Map" className="hero-image" />
+                <img
+                    src={backgroundImage}
+                    alt="Frost Pursuit Map"
+                    className="hero-image"
+                    onLoad={() => setIsLoading(false)}
+                />
                 <img src={backgroundImage} alt="Frost Pursuit Map Original" className="hero-image-original" />
                 <div className="hero-grid-overlay">
                     {gridCells}
                 </div>
+            </div>
+            {/* Hotspot for Spectator Loft (left building) */}
+            <div className="hero-hotspot spectator-loft-hotspot">
+                <span className="waypoint-marker"></span>
+                <span className="hotspot-tooltip">Spectator Loft</span>
+            </div>
+            {/* Hotspot for Main Lounge (right building) */}
+            <div className="hero-hotspot main-lounge-hotspot">
+                <span className="waypoint-marker"></span>
+                <span className="hotspot-tooltip">Main Lounge</span>
+            </div>
+            {/* Hotspot for Cable Car */}
+            <div className="hero-hotspot cable-car-hotspot">
+                <span className="waypoint-marker"></span>
+                <span className="hotspot-tooltip">Cable Car</span>
             </div>
             <div className={`hero-content ${isTextHidden ? 'hidden' : ''}`}>
                 <div className="hero-title">

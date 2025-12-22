@@ -44,13 +44,13 @@ export function Navbar({ logoSrc = '/images/logo 1.PNG' }: NavbarProps) {
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${themeClass}`}>
             <div className="nav-container">
-                <a href="#" className="nav-logo">
+                <a href="https://mc-ctec.org/" className="nav-logo" target="_blank" rel="noopener noreferrer">
                     <img src={logoSrc} alt="Frost Pursuit" className="logo-img" />
                 </a>
                 <ul className="nav-links">
                     <li><a href="#showcase">Showcase</a></li>
                     <li><a href="#highlights">Highlights</a></li>
-                    <li><a href="#featured">Featured</a></li>
+                    <li><a href="#redstone">Redstone</a></li>
                     <li><a href="https://www.planetminecraft.com/project/free-to-download-frost-pursuit-a-1k-x-1k-winter-ice-boat-race-map-vanilla-1-20-1/" className="nav-cta" target="_blank" rel="noopener noreferrer">Download</a></li>
                 </ul>
                 <button className="nav-toggle" aria-label="Toggle menu">

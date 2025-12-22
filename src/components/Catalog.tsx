@@ -12,31 +12,31 @@ const catalogItems: CatalogItem[] = [
         id: 'interior',
         title: 'Interior',
         count: 6,
-        image: '/images/interior 2nd building 1.png'
+        image: `${import.meta.env.BASE_URL}images/interior 2nd building 1.png`
     },
     {
         id: 'cable-car',
         title: 'Cable Car',
         count: 3,
-        image: '/images/track solas main.png'
+        image: `${import.meta.env.BASE_URL}images/track solas main.png`
     },
     {
         id: 'mountain',
         title: 'Mountain',
         count: 8,
-        image: '/images/render 1.png'
+        image: `${import.meta.env.BASE_URL}images/render 1.png`
     },
     {
         id: 'ice-caves',
         title: 'Ice Caves',
         count: 4,
-        image: '/images/ice cave main 1.png'
+        image: `${import.meta.env.BASE_URL}images/ice cave main 1.png`
     },
     {
         id: 'lodge',
         title: 'Lodge',
         count: 5,
-        image: '/images/dining hall sun.png'
+        image: `${import.meta.env.BASE_URL}images/dining hall sun.png`
     }
 ];
 

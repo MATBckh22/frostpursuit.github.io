@@ -2,7 +2,7 @@ interface FooterProps {
     logoSrc?: string;
 }
 
-export function Footer({ logoSrc = '/images/logo 2.png' }: FooterProps) {
+export function Footer({ logoSrc = `${import.meta.env.BASE_URL}images/logo 2.png` }: FooterProps) {
     const currentYear = new Date().getFullYear();
 
     return (

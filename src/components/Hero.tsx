@@ -8,8 +8,8 @@ interface HeroProps {
 const CELL_SIZE = 50; // Fixed 50x50 pixel squares
 
 export function Hero({
-    backgroundImage = '/images/main render.jpg',
-    logoSrc = '/images/logo 2.png'
+    backgroundImage = `${import.meta.env.BASE_URL}images/main render.jpg`,
+    logoSrc = `${import.meta.env.BASE_URL}images/logo 2.png`
 }: HeroProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [isTextHidden, setIsTextHidden] = useState(false);

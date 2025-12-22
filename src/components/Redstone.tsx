@@ -70,7 +70,7 @@ export function Redstone() {
                             ref={(el) => { itemRefs.current[index] = el; }}
                         >
                             <img
-                                src={`/images/frost pursuit redstone/${item.src}`}
+                                src={`${import.meta.env.BASE_URL}images/frost pursuit redstone/${item.src}`}
                                 alt={item.label}
                             />
                         </div>

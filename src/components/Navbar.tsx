@@ -4,7 +4,7 @@ interface NavbarProps {
     logoSrc?: string;
 }
 
-export function Navbar({ logoSrc = '/images/logo 1.PNG' }: NavbarProps) {
+export function Navbar({ logoSrc = `${import.meta.env.BASE_URL}images/logo 1.PNG` }: NavbarProps) {
     const [scrolled, setScrolled] = useState(false);
     const [currentTheme, setCurrentTheme] = useState<'default' | 'cyan' | 'redstone'>('default');
 

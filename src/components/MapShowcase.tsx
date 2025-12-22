@@ -7,16 +7,16 @@ interface BlockStat {
 }
 
 const blockStats: BlockStat[] = [
-    { count: '3,118,723', name: 'Packed Ice', image: '/images/packed ice.webp' },
-    { count: '1,479,066', name: 'Blue Ice', image: '/images/blue ice.webp' },
-    { count: '1,050,334', name: 'Light Blue Concrete Powder', image: '/images/light blue concrete powder.webp' },
-    { count: '823,695', name: 'Stone', image: '/images/stone.webp' },
-    { count: '149,209', name: 'Acacia Log', image: '/images/acacia log.png' },
-    { count: '138,951', name: 'Tuff', image: '/images/tuff.webp' },
-    { count: '121,562', name: 'Snow', image: '/images/snow.webp' },
-    { count: '117,669', name: 'Barrier', image: '/images/barrier.webp' },
-    { count: '117,254', name: 'Deepslate', image: '/images/deepslate.webp' },
-    { count: '75,828', name: 'Andesite', image: '/images/andesite.webp' },
+    { count: '3,118,723', name: 'Packed Ice', image: `${import.meta.env.BASE_URL}images/packed ice.webp` },
+    { count: '1,479,066', name: 'Blue Ice', image: `${import.meta.env.BASE_URL}images/blue ice.webp` },
+    { count: '1,050,334', name: 'Light Blue Concrete Powder', image: `${import.meta.env.BASE_URL}images/light blue concrete powder.webp` },
+    { count: '823,695', name: 'Stone', image: `${import.meta.env.BASE_URL}images/stone.webp` },
+    { count: '149,209', name: 'Acacia Log', image: `${import.meta.env.BASE_URL}images/acacia log.png` },
+    { count: '138,951', name: 'Tuff', image: `${import.meta.env.BASE_URL}images/tuff.webp` },
+    { count: '121,562', name: 'Snow', image: `${import.meta.env.BASE_URL}images/snow.webp` },
+    { count: '117,669', name: 'Barrier', image: `${import.meta.env.BASE_URL}images/barrier.webp` },
+    { count: '117,254', name: 'Deepslate', image: `${import.meta.env.BASE_URL}images/deepslate.webp` },
+    { count: '75,828', name: 'Andesite', image: `${import.meta.env.BASE_URL}images/andesite.webp` },
 ];
 
 type ViewMode = 'isometric' | 'no-balloons' | 'top-down';
@@ -73,17 +73,17 @@ export function MapShowcase() {
                 {/* Map Image - Crossfade between views */}
                 <div className="map-image-container">
                     <img
-                        src="/images/isometric 1.png"
+                        src={`${import.meta.env.BASE_URL}images/isometric 1.png`}
                         alt="Map isometric view"
                         className={`map-image ${viewMode === 'isometric' ? 'active' : ''}`}
                     />
                     <img
-                        src="/images/isometric 4.png"
+                        src={`${import.meta.env.BASE_URL}images/isometric 4.png`}
                         alt="Map no-balloons view"
                         className={`map-image ${viewMode === 'no-balloons' ? 'active' : ''}`}
                     />
                     <img
-                        src="/images/isometric 2.png"
+                        src={`${import.meta.env.BASE_URL}images/isometric 2.png`}
                         alt="Map top-down view"
                         className={`map-image ${viewMode === 'top-down' ? 'active' : ''}`}
                     />

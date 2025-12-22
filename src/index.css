@@ -122,6 +122,40 @@
     --radius-xl: 32px;
 }
 
+/* Dark Mode - inverted palette */
+:root.dark-mode {
+    /* Inverted frost colors - light to dark */
+    --frost-deep: #7fbdc6;
+    --frost-dark: #a0d3db;
+    --frost-mid: #b2e0e7;
+    --frost-light: #5ba8b0;
+    --frost-accent: #41959f;
+    --frost-glow: #2f7f8b;
+    --frost-pale: #1e6b76;
+    --frost-lightest: #0c585f;
+
+    /* Inverted neutrals */
+    --white: #0a0a0a;
+    --white-90: rgba(10, 10, 10, 0.9);
+    --white-70: rgba(10, 10, 10, 0.7);
+    --white-50: rgba(10, 10, 10, 0.5);
+    --white-20: rgba(10, 10, 10, 0.2);
+    --white-10: rgba(10, 10, 10, 0.1);
+
+    --dark: #ffffff;
+    --dark-90: rgba(255, 255, 255, 0.9);
+    --dark-70: rgba(255, 255, 255, 0.7);
+    --dark-50: rgba(255, 255, 255, 0.5);
+
+    --glass-bg: rgba(0, 0, 0, 0.3);
+    --glass-border: rgba(255, 255, 255, 0.15);
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 40px rgba(127, 189, 198, 0.4);
+}
+
 /* Reset & Base */
 *,
 *::before,
@@ -392,6 +426,36 @@ ul {
 
 .navbar.scrolled .nav-toggle span {
     background: var(--frost-deep);
+}
+
+/* Dark Mode Toggle */
+.dark-mode-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    margin-left: var(--space-sm);
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.navbar.scrolled .dark-mode-toggle {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.navbar.scrolled .dark-mode-toggle:hover {
+    background: rgba(0, 0, 0, 0.15);
 }
 
 /* ========================================
@@ -829,15 +893,16 @@ ul {
     width: 24px;
     height: 32px;
     cursor: pointer;
-    animation: waypointBounce 2s ease-in-out infinite;
+    animation: waypointBouncePeriodic 4s ease-in-out infinite;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Map pin head */
+/* Map pin head */
 .waypoint-marker::before {
     content: '';
     position: absolute;
-    top: -180px;
+    top: -210px;
     left: 50%;
     transform: translateX(-50%);
     width: 20px;
@@ -854,7 +919,7 @@ ul {
 .waypoint-marker::after {
     content: '';
     position: absolute;
-    top: -175px;
+    top: -205px;
     left: 50%;
     transform: translateX(-50%);
     width: 8px;
@@ -865,15 +930,21 @@ ul {
     opacity: 85%;
 }
 
-@keyframes waypointBounce {
+@keyframes waypointBouncePeriodic {
 
     0%,
+    10%,
+    20%,
     100% {
         transform: translateX(-50%) translateY(0);
     }
 
-    50% {
-        transform: translateX(-50%) translateY(-2px);
+    5% {
+        transform: translateX(-50%) translateY(-8px);
+    }
+
+    15% {
+        transform: translateX(-50%) translateY(-4px);
     }
 }
 
@@ -1567,6 +1638,7 @@ ul {
     top: 120px;
     height: fit-content;
     padding: var(--space-md) 0;
+    align-self: start;
 }
 
 .redstone-header {
@@ -1580,7 +1652,6 @@ ul {
     font-weight: 700;
     color: #c41e3a;
     margin: 0 0 var(--space-xs) 0;
-    font-feature-settings: "salt" 0, "ss01" 0, "ss02" 0;
 }
 
 .redstone-title-technical {
@@ -1605,8 +1676,9 @@ ul {
 }
 
 .redstone-belief {
-    font-family: 'Inter', var(--font-body);
+    font-family: 'Open Sans', sans-serif;
     font-size: 1rem;
+    font-weight: 700;
     line-height: 1.7;
     color: var(--dark-70);
     margin: 0 0 var(--space-md) 0;
@@ -1625,12 +1697,13 @@ ul {
 }
 
 .redstone-description {
-    font-family: var(--font-body);
+    font-family: 'Open Sans', sans-serif;
     font-size: 1rem;
+    font-weight: 600;
     color: var(--dark-70);
     line-height: 1.6;
     margin-top: var(--space-sm);
-    max-width: 90%;
+    max-width: 500px;
     animation: fadeIn 0.8s ease forwards;
 }
 
@@ -1681,7 +1754,7 @@ ul {
 
 /* Redstone scroll column */
 .redstone-scroll {
-    padding: var(--space-xl) 0;
+    padding: var(--space-xl) 0 var(--space-md) -10%;
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);

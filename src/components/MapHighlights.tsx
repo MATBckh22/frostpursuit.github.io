@@ -170,11 +170,19 @@ export function MapHighlights() {
             if (e.key === 'Escape' && selectedCard) {
                 closeGallery();
             }
+            if (e.key === 'ArrowRight' && selectedCard) {
+                const images = isLightMode ? selectedCard.dayImages : selectedCard.nightImages;
+                setSelectedImageIndex((prev) => prev === images.length - 1 ? 0 : prev + 1);
+            }
+            if (e.key === 'ArrowLeft' && selectedCard) {
+                const images = isLightMode ? selectedCard.dayImages : selectedCard.nightImages;
+                setSelectedImageIndex((prev) => prev === 0 ? images.length - 1 : prev - 1);
+            }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [selectedCard, closeGallery]);
+    }, [selectedCard, closeGallery, isLightMode]);
 
     // Get current images based on mode
     const getCurrentImages = useCallback((card: HighlightCard) => {

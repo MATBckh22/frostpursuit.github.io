@@ -3,7 +3,6 @@ import { Hero } from './components/Hero';
 import { MapShowcase } from './components/MapShowcase';
 import { MapHighlights } from './components/MapHighlights';
 import { Redstone } from './components/Redstone';
-import { Featured } from './components/Featured';
 import { Footer } from './components/Footer';
 
 function App() {
@@ -14,7 +13,6 @@ function App() {
             <MapShowcase />
             <MapHighlights />
             <Redstone />
-            <Featured />
             <Footer />
         </>
     );

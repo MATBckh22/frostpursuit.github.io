@@ -8,7 +8,7 @@ interface HeroProps {
 const CELL_SIZE = 50; // Fixed 50x50 pixel squares
 
 export function Hero({
-    backgroundImage = `${import.meta.env.BASE_URL}images/main render.jpg`,
+    backgroundImage = `${import.meta.env.BASE_URL}images/render frost pursuit.webp`,
     logoSrc = `${import.meta.env.BASE_URL}images/logo 2.png`
 }: HeroProps) {
     const [isLoading, setIsLoading] = useState(true);

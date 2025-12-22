@@ -355,7 +355,7 @@ ul {
     filter: brightness(0) invert(1);
     margin: -20px 0;
     position: relative;
-    left: -100px;
+    left: clamp(-50px, -5vw, -100px);
 }
 
 .nav-links {
@@ -1832,16 +1832,35 @@ ul {
 @media (max-width: 900px) {
     .redstone-layout {
         grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
     }
 
     .redstone-sticky {
-        position: relative;
-        top: 0;
+        order: -1;
+        position: sticky;
+        top: -155px;
         text-align: center;
+        background: var(--white);
+        z-index: 10;
+        padding: 0 var(--space-sm) var(--space-md);
+        margin-top: 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .redstone-scroll {
+        order: 1;
+        padding: var(--space-sm) 0;
+        align-items: center;
     }
 
     .redstone-belief {
         max-width: 100%;
+    }
+
+    .redstone-current-label {
+        width: auto;
+        margin: 0 auto;
     }
 }
 
@@ -2248,5 +2267,203 @@ ul {
     .catalog-nav {
         justify-content: center;
         padding-right: 0;
+    }
+}
+
+/* ========================================
+   ADDITIONAL RESPONSIVE FIXES
+   ======================================== */
+
+/* Tablet - 1024px and below */
+@media (max-width: 1024px) {
+    .logo-img {
+        height: 35px;
+    }
+
+    .nav-cta {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .map-image-container {
+        max-width: 100%;
+        padding: 0 var(--space-md);
+    }
+
+    .map-image {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .view-buttons {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .redstone-scroll-item {
+        max-width: 100%;
+        padding-right: var(--space-md);
+    }
+
+    .redstone-current-label {
+        font-size: 1.25rem;
+    }
+
+    .redstone-description {
+        max-width: 100%;
+    }
+}
+
+/* Tablet Portrait - 768px and below */
+@media (max-width: 768px) {
+    .logo-img {
+        height: 30px;
+        left: 0;
+    }
+
+    .dark-mode-toggle {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    /* MapShowcase */
+    .block-stat-item {
+        min-width: 60px;
+    }
+
+    .block-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .block-name {
+        font-size: 0.7rem;
+    }
+
+    .block-count {
+        font-size: 0.65rem;
+    }
+
+    .view-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    /* MapHighlights */
+    .highlight-card-title {
+        font-size: 1rem;
+    }
+
+    .gallery-overlay .gallery-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .gallery-main img {
+        max-height: 50vh;
+    }
+
+    /* Redstone */
+    .redstone-title {
+        font-size: 1.75rem;
+    }
+
+    .redstone-subtitle {
+        font-size: 1rem;
+    }
+
+    .redstone-belief {
+        font-size: 0.9rem;
+    }
+
+    .redstone-current-label {
+        width: 100%;
+    }
+
+    .redstone-scroll {
+        padding: var(--space-lg) 0 var(--space-md) 0;
+    }
+
+    /* Footer */
+    .footer-links {
+        gap: var(--space-sm);
+    }
+}
+
+/* Mobile - 480px and below */
+@media (max-width: 480px) {
+    .navbar {
+        padding: 0.75rem 0;
+    }
+
+    .logo-img {
+        height: 25px;
+    }
+
+    .nav-container {
+        padding: 0 var(--space-sm);
+    }
+
+    /* MapShowcase */
+    .total-count {
+        font-size: 2.5rem;
+    }
+
+    .total-label {
+        font-size: 1rem;
+    }
+
+    .view-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .view-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem;
+    }
+
+    /* MapHighlights */
+    .mode-toggle {
+        transform: scale(0.8);
+    }
+
+    .gallery-nav {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+
+    /* Redstone */
+    .redstone-sticky {
+        padding: var(--space-sm) 0;
+    }
+
+    .redstone-title {
+        font-size: 1.5rem;
+    }
+
+    .redstone-title-technical {
+        font-size: 0.8em;
+        padding: 0.1rem 0.4rem;
+    }
+
+    .redstone-scroll-item {
+        padding-right: 0;
+    }
+
+    /* Footer */
+    .footer-logo-img {
+        height: 40px;
+    }
+
+    .footer-tagline {
+        font-size: 0.75rem;
+    }
+
+    .footer-links a {
+        font-size: 0.85rem;
     }
 }

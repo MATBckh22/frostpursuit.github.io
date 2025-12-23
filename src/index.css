@@ -913,6 +913,7 @@ ul {
     transform: translateX(-50%) rotate(-45deg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     opacity: 85%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Map pin dot */
@@ -928,6 +929,7 @@ ul {
     border-radius: 50%;
     z-index: 1;
     opacity: 85%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 @keyframes waypointBouncePeriodic {
@@ -950,9 +952,16 @@ ul {
 
 .hero-hotspot:hover .waypoint-marker {
     animation: none;
+}
+
+.hero-hotspot:hover .waypoint-marker::before {
     opacity: 0;
-    transform: translateX(-50%) scale(0.8);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateX(-50%) rotate(-45deg) scale(0.5);
+}
+
+.hero-hotspot:hover .waypoint-marker::after {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
 }
 
 .hotspot-tooltip {
@@ -987,6 +996,7 @@ ul {
 .hero-hotspot:hover .hotspot-tooltip {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
 }
 
 .map-footnote {

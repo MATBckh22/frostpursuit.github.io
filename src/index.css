@@ -61,7 +61,7 @@
 }
 
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;500&family=Inter:wght@300;400;500;600&family=Sometype+Mono:ital,wght@0,400..700;1,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@400;500&family=Inter:wght@300;400;500;600&family=Open+Sans:wght@400;600;700&family=Sometype+Mono:ital,wght@0,400..700;1,400..700&display=swap');
 
 /* CSS Variables - Cyan Palette */
 :root {
@@ -415,6 +415,7 @@ ul {
     flex-direction: column;
     gap: 5px;
     padding: 5px;
+    z-index: 1001;
 }
 
 .nav-toggle span {
@@ -424,8 +425,352 @@ ul {
     transition: var(--transition-fast);
 }
 
-.navbar.scrolled .nav-toggle span {
+.navbar.scrolled .nav-toggle span,
+.navbar.menu-open .nav-toggle span {
     background: var(--frost-deep);
+}
+
+/* Hamburger menu turns cyan when hovering navbar (default state) */
+.navbar:hover .nav-toggle span {
+    background: var(--frost-deep);
+}
+
+/* Hamburger menu stays white in cyan and redstone themed sections */
+.navbar.cyan-theme .nav-toggle span,
+.navbar.redstone-theme .nav-toggle span {
+    background: var(--white) !important;
+}
+
+.navbar.cyan-theme:hover .nav-toggle span,
+.navbar.redstone-theme:hover .nav-toggle span {
+    background: var(--white) !important;
+}
+
+/* Hamburger animation when active */
+.nav-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile Navigation Styles */
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: flex;
+        position: relative;
+        top: -5px;
+        /* Adjust to move up (-) or down (+) */
+        right: 0;
+        /* Adjust to move left (+) or right (-) */
+    }
+
+    .nav-links {
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--frost-deep);
+        /* Solid cyan background */
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 0;
+        z-index: 1001;
+        padding-top: 80px;
+        /* Space for header */
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
+
+        /* Hidden by default */
+        visibility: hidden;
+        pointer-events: none;
+        opacity: 0;
+        transition: visibility 0.3s ease, opacity 0.3s ease;
+    }
+
+    .nav-links.active {
+        visibility: visible !important;
+        pointer-events: auto !important;
+        opacity: 1 !important;
+    }
+
+    /* Menu items - left aligned with divider lines */
+    .nav-links li {
+        width: 100%;
+        min-height: 60px;
+        display: flex !important;
+        align-items: stretch;
+        /* Change from center to stretch so link fills height */
+        justify-content: flex-start;
+        background: transparent;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .nav-links a {
+        color: var(--white) !important;
+        font-family: 'Liliana', var(--font-display);
+        font-size: 1.3rem;
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 1px;
+        text-shadow: none;
+        padding: 0 var(--space-md);
+        /* Remove top/bottom padding here */
+        display: flex;
+        /* Make it flex to center text vertically while stretching */
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        /* Fill parent li */
+        text-align: left;
+    }
+
+    .nav-links a:hover {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .nav-links a::after {
+        display: none;
+    }
+
+    /* Download link - High specificity to beat global hover rules */
+    .navbar.menu-open .nav-links .nav-cta,
+    .navbar.menu-open .nav-links .nav-cta:hover {
+        color: #00bcd4 !important;
+        /* Bright cyan color */
+        border-radius: 0 !important;
+        padding: 0 var(--space-md) !important;
+        background: var(--white) !important;
+        /* Set background directly on A */
+        backdrop-filter: none !important;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Ensure block background matches */
+    .nav-links li:nth-child(4) {
+        background: var(--white) !important;
+    }
+
+    /* No ::before or ::after pseudo elements needed */
+    .nav-links::before,
+    .nav-links::after {
+        display: none;
+    }
+
+    /* Theme-specific mobile menu styles - OUTSIDE media query */
+
+    /* Cyan theme (Highlights section) - white background, cyan text */
+    .navbar.cyan-theme.menu-open .nav-links {
+        background: var(--white) !important;
+    }
+
+    .navbar.cyan-theme.menu-open .nav-links a {
+        color: var(--frost-deep) !important;
+    }
+
+    .navbar.cyan-theme.menu-open .nav-links li {
+        border-bottom: 1px solid rgba(12, 88, 95, 0.2);
+    }
+
+    /* Download button in Cyan Theme (White Menu) -> Cyan Bg, White Text */
+    .navbar.cyan-theme.menu-open .nav-links li:nth-child(4) {
+        background: var(--frost-deep) !important;
+    }
+
+    .navbar.cyan-theme.menu-open .nav-links .nav-cta,
+    .navbar.cyan-theme.menu-open .nav-links .nav-cta:hover {
+        color: var(--white) !important;
+        background: var(--frost-deep) !important;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        border-radius: 0 !important;
+        padding: 0 var(--space-md) !important;
+    }
+
+    .navbar.cyan-theme.menu-open {
+        background: var(--white) !important;
+    }
+
+    .navbar.cyan-theme.menu-open .logo-img {
+        filter: none;
+    }
+
+    .navbar.cyan-theme.menu-open .nav-toggle span {
+        background: var(--frost-deep) !important;
+    }
+
+    /* Redstone theme - red background, white text */
+    .navbar.redstone-theme.menu-open .nav-links {
+        background: #c41e3a !important;
+    }
+
+    .navbar.redstone-theme.menu-open .nav-links a {
+        color: var(--white) !important;
+    }
+
+    .navbar.redstone-theme.menu-open .nav-links li {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Download button in Redstone Theme (Red Menu) -> White Bg, Red Text */
+    .navbar.redstone-theme.menu-open .nav-links li:nth-child(4) {
+        background: var(--white) !important;
+    }
+
+    .navbar.redstone-theme.menu-open .nav-links .nav-cta,
+    .navbar.redstone-theme.menu-open .nav-links .nav-cta:hover {
+        color: #c41e3a !important;
+        background: var(--white) !important;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        border-radius: 0 !important;
+        padding: 0 var(--space-md) !important;
+    }
+
+    .navbar.redstone-theme.menu-open {
+        background: #c41e3a !important;
+    }
+
+    .navbar.redstone-theme.menu-open .logo-img {
+        filter: brightness(0) invert(1);
+    }
+
+    .navbar.redstone-theme.menu-open .nav-toggle span {
+        background: var(--white) !important;
+    }
+
+
+    /* Staggered fade in animation */
+    .nav-links.active li {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+
+    .nav-links.active li:nth-child(1) {
+        transition-delay: 0.05s;
+    }
+
+    .nav-links.active li:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-links.active li:nth-child(3) {
+        transition-delay: 0.15s;
+    }
+
+    .nav-links.active li:nth-child(4) {
+        transition-delay: 0.2s;
+    }
+
+    /* When menu is active, slide items in */
+    .nav-links.active li {
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+    }
+
+    /* Staggered entry - each item slides in slightly after the previous */
+    .nav-links.active li:nth-child(1) {
+        transition-delay: 0.05s;
+    }
+
+    .nav-links.active li:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-links.active li:nth-child(3) {
+        transition-delay: 0.15s;
+    }
+
+    .nav-links.active li:nth-child(4) {
+        transition-delay: 0.2s;
+    }
+
+    /* Staggered exit - reverse order */
+    .nav-links li:nth-child(1) {
+        transition-delay: 0.15s;
+    }
+
+    .nav-links li:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-links li:nth-child(3) {
+        transition-delay: 0.05s;
+    }
+
+    .nav-links li:nth-child(4) {
+        transition-delay: 0s;
+    }
+
+
+
+    .logo-img {
+        height: 80px !important;
+        min-height: 80px !important;
+        left: 0;
+    }
+
+    .navbar.menu-open {
+        background: var(--frost-deep);
+        /* Same solid cyan as menu */
+        z-index: 1002;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .navbar.menu-open .nav-container {
+        justify-content: space-between;
+        /* Logo left, close right */
+        position: relative;
+    }
+
+    .navbar.menu-open .nav-logo {
+        position: relative;
+        left: 0;
+        transform: none;
+        z-index: 1003;
+    }
+
+    .navbar.menu-open .logo-img {
+        filter: brightness(0) invert(1);
+        height: 60px;
+    }
+
+    .navbar.menu-open .nav-toggle {
+        position: fixed;
+        right: var(--space-md);
+        top: 23px;
+        /* Adjust this value to move the X button up/down freely */
+        transform: translateY(-50%);
+        z-index: 1003;
+    }
+
+    .navbar.menu-open .nav-toggle span {
+        background: var(--white);
+    }
+
+
 }
 
 /* Dark Mode Toggle */
@@ -540,21 +885,36 @@ ul {
     z-index: -1;
 }
 
+.hero-map-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.1);
+    /* Calculated for 16:9 Aspect Ratio */
+    width: 100vw;
+    height: 56.25vw;
+}
+
+@media (max-aspect-ratio: 16/9) {
+    .hero-map-wrapper {
+        width: 177.78vh;
+        height: 100vh;
+    }
+}
+
 .hero-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transform: scale(1.1);
+    object-fit: fill;
 }
 
-/* Original image layer - revealed with grid cells */
+/* Original image layer */
 .hero-image-original {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transform: scale(1.1);
+    object-fit: fill;
     z-index: 0;
     pointer-events: none;
 }
@@ -568,11 +928,31 @@ ul {
     overflow: hidden;
 }
 
+/* Hotspots layer - above grid overlay */
+.hero-hotspots-layer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.1);
+    width: 100vw;
+    height: 56.25vw;
+    z-index: 3;
+    pointer-events: none;
+}
+
+@media (max-aspect-ratio: 16/9) {
+    .hero-hotspots-layer {
+        width: 177.78vh;
+        height: 100vh;
+    }
+}
+
 .grid-cell {
     position: absolute;
     background: rgba(12, 88, 95, 0.55);
     transition: opacity 0.15s ease-out;
     opacity: 1;
+    pointer-events: none;
 }
 
 .hero-overlay {
@@ -856,30 +1236,30 @@ ul {
 /* Hero Hotspots */
 .hero-hotspot {
     position: absolute;
-    cursor: pointer;
+    cursor: none;
     z-index: 100;
 }
 
 .spectator-loft-hotspot {
     /* Left building - Spectator Loft */
-    top: 40%;
-    left: 27%;
+    top: 38%;
+    left: 28%;
     width: 25%;
     height: 25%;
 }
 
 .main-lounge-hotspot {
     /* Right building - Main Lounge */
-    top: 21%;
-    left: 49.5%;
+    top: 25%;
+    left: 48.5%;
     width: 20%;
     height: 20%;
 }
 
 .cable-car-hotspot {
     /* Cable Car - upper right area */
-    top: 85%;
-    left: 75%;
+    top: 81%;
+    left: 72%;
     width: 15%;
     height: 20%;
 }
@@ -892,9 +1272,29 @@ ul {
     transform: translateX(-50%);
     width: 24px;
     height: 32px;
-    cursor: pointer;
+    cursor: none;
     animation: waypointBouncePeriodic 4s ease-in-out infinite;
     transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Individual waypoint marker positions - these override the default positioning */
+/* Use top/left percentages relative to the HOTSPOT container */
+.spectator-loft-marker {
+    /* Spectator Loft - adjust to move this specific marker */
+    bottom: 0%;
+    left: 50%;
+}
+
+.main-lounge-marker {
+    /* Main Lounge - adjust to move this specific marker */
+    bottom: 0%;
+    left: 50%;
+}
+
+.cable-car-marker {
+    /* Cable Car - adjust to move this specific marker */
+    bottom: 0%;
+    left: 50%;
 }
 
 /* Map pin head */
@@ -948,7 +1348,7 @@ ul {
     }
 }
 
-.hero-hotspot:hover .waypoint-marker {
+.hero-hotspot.hovered .waypoint-marker {
     animation: none;
     opacity: 0;
     transform: translateX(-50%) scale(0.8);
@@ -984,9 +1384,28 @@ ul {
     border-top-color: var(--white);
 }
 
-.hero-hotspot:hover .hotspot-tooltip {
+.hero-hotspot.hovered .hotspot-tooltip {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+/* Individual tooltip positions - adjust these to move each name label */
+.spectator-loft-hotspot .hotspot-tooltip {
+    /* Spectator Loft tooltip position */
+    bottom: 85%;
+    left: 50%;
+}
+
+.main-lounge-hotspot .hotspot-tooltip {
+    /* Main Lounge tooltip position */
+    bottom: 105%;
+    left: 50%;
+}
+
+.cable-car-hotspot .hotspot-tooltip {
+    /* Cable Car tooltip position */
+    bottom: 105%;
+    left: 50%;
 }
 
 .map-footnote {
@@ -1398,6 +1817,75 @@ ul {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Mobile list hidden by default (shown only on mobile) */
+.gallery-mobile-list {
+    display: none;
+}
+
+/* Mobile Gallery Styles */
+@media (max-width: 768px) {
+
+    /* Hide desktop elements on mobile */
+    .gallery-desktop {
+        display: none !important;
+    }
+
+    /* Show mobile list */
+    .gallery-mobile-list {
+        display: block;
+        padding: var(--space-sm);
+    }
+
+    .gallery-list-item {
+        margin-bottom: var(--space-md);
+        position: relative;
+    }
+
+    .gallery-list-item img {
+        width: 100%;
+        border-radius: var(--radius-md);
+    }
+
+    .gallery-list-counter {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: var(--white);
+        padding: 4px 10px;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .gallery-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+        overflow-y: auto;
+        display: block;
+    }
+
+    .gallery-header {
+        position: sticky;
+        top: 0;
+        background: rgba(0, 0, 0, 0.95);
+        padding: var(--space-md);
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .gallery-close {
+        top: 10px;
+        right: 15px;
+        font-size: 2rem;
+        z-index: 11;
+    }
 }
 
 /* Responsive Grid */
@@ -2385,6 +2873,27 @@ ul {
         padding: var(--space-lg) 0 var(--space-md) 0;
     }
 
+    /* Hero */
+    .hero-content {
+        left: var(--space-md);
+        bottom: 15%;
+        max-width: 90%;
+    }
+
+    .title-frost,
+    .title-pursuit {
+        font-size: clamp(1.5rem, 8vw, 2.5rem);
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-cta {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
+
     /* Footer */
     .footer-links {
         gap: var(--space-sm);
@@ -2454,6 +2963,22 @@ ul {
         padding-right: 0;
     }
 
+    /* Hero */
+    .hero-content {
+        left: var(--space-sm);
+        bottom: 10%;
+    }
+
+    .title-frost,
+    .title-pursuit {
+        font-size: clamp(1.25rem, 7vw, 2rem);
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: var(--space-sm);
+    }
+
     /* Footer */
     .footer-logo-img {
         height: 40px;
@@ -2466,4 +2991,16 @@ ul {
     .footer-links a {
         font-size: 0.85rem;
     }
+}
+
+/* ========================================
+   Map Highlights Section Styles
+   ======================================== */
+.highlights-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    margin-top: 0.5rem;
 }

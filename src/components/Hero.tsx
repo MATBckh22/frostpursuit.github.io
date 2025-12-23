@@ -7,6 +7,13 @@ interface HeroProps {
 
 const CELL_SIZE = 50; // Fixed 50x50 pixel squares
 
+// Hotspot bounds as percentages of the wrapper
+const HOTSPOTS = [
+    { id: 'spectator-loft', top: 0.40, left: 0.27, width: 0.25, height: 0.25, label: 'Spectator Loft' },
+    { id: 'main-lounge', top: 0.21, left: 0.495, width: 0.20, height: 0.20, label: 'Main Lounge' },
+    { id: 'cable-car', top: 0.85, left: 0.75, width: 0.15, height: 0.20, label: 'Cable Car' },
+];
+
 export function Hero({
     backgroundImage = `${import.meta.env.BASE_URL}images/render frost pursuit.webp`,
     logoSrc = `${import.meta.env.BASE_URL}images/logo 2.png`
@@ -15,7 +22,9 @@ export function Hero({
     const [isTextHidden, setIsTextHidden] = useState(false);
     const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
     const [gridDimensions, setGridDimensions] = useState({ cols: 0, rows: 0 });
+    const [hoveredHotspot, setHoveredHotspot] = useState<string | null>(null);
     const heroRef = useRef<HTMLElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -52,11 +61,33 @@ export function Hero({
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             setCursorPos({ x, y });
+
+            // Check if cursor is over any hotspot
+            if (wrapperRef.current) {
+                const wrapperRect = wrapperRef.current.getBoundingClientRect();
+                const relX = (e.clientX - wrapperRect.left) / wrapperRect.width;
+                const relY = (e.clientY - wrapperRect.top) / wrapperRect.height;
+
+                let foundHotspot: string | null = null;
+                for (const hotspot of HOTSPOTS) {
+                    if (
+                        relX >= hotspot.left &&
+                        relX <= hotspot.left + hotspot.width &&
+                        relY >= hotspot.top &&
+                        relY <= hotspot.top + hotspot.height
+                    ) {
+                        foundHotspot = hotspot.id;
+                        break;
+                    }
+                }
+                setHoveredHotspot(foundHotspot);
+            }
         }
     };
 
     const handleMouseLeave = () => {
         setCursorPos(null);
+        setHoveredHotspot(null);
     };
 
     // Calculate opacity based on distance from cursor
@@ -122,31 +153,38 @@ export function Hero({
                 </div>
             )}
             <div className="hero-bg">
-                <img
-                    src={backgroundImage}
-                    alt="Frost Pursuit Map"
-                    className="hero-image"
-                    onLoad={() => setIsLoading(false)}
-                />
-                <img src={backgroundImage} alt="Frost Pursuit Map Original" className="hero-image-original" />
+                <div className="hero-map-wrapper" ref={wrapperRef}>
+                    <img
+                        src={backgroundImage}
+                        alt="Frost Pursuit Map"
+                        className="hero-image"
+                        onLoad={() => setIsLoading(false)}
+                    />
+                    <img src={backgroundImage} alt="Frost Pursuit Map Original" className="hero-image-original" />
+                </div>
+
                 <div className="hero-grid-overlay">
                     {gridCells}
                 </div>
-            </div>
-            {/* Hotspot for Spectator Loft (left building) */}
-            <div className="hero-hotspot spectator-loft-hotspot">
-                <span className="waypoint-marker"></span>
-                <span className="hotspot-tooltip">Spectator Loft</span>
-            </div>
-            {/* Hotspot for Main Lounge (right building) */}
-            <div className="hero-hotspot main-lounge-hotspot">
-                <span className="waypoint-marker"></span>
-                <span className="hotspot-tooltip">Main Lounge</span>
-            </div>
-            {/* Hotspot for Cable Car */}
-            <div className="hero-hotspot cable-car-hotspot">
-                <span className="waypoint-marker"></span>
-                <span className="hotspot-tooltip">Cable Car</span>
+
+                {/* Hotspots layer - sits above grid overlay */}
+                <div className="hero-hotspots-layer">
+                    {/* Hotspot for Spectator Loft (left building) */}
+                    <div className={`hero-hotspot spectator-loft-hotspot ${hoveredHotspot === 'spectator-loft' ? 'hovered' : ''}`}>
+                        <span className="waypoint-marker spectator-loft-marker"></span>
+                        <span className="hotspot-tooltip">Spectator Loft</span>
+                    </div>
+                    {/* Hotspot for Main Lounge (right building) */}
+                    <div className={`hero-hotspot main-lounge-hotspot ${hoveredHotspot === 'main-lounge' ? 'hovered' : ''}`}>
+                        <span className="waypoint-marker main-lounge-marker"></span>
+                        <span className="hotspot-tooltip">Main Lounge</span>
+                    </div>
+                    {/* Hotspot for Cable Car */}
+                    <div className={`hero-hotspot cable-car-hotspot ${hoveredHotspot === 'cable-car' ? 'hovered' : ''}`}>
+                        <span className="waypoint-marker cable-car-marker"></span>
+                        <span className="hotspot-tooltip">Cable Car</span>
+                    </div>
+                </div>
             </div>
             <div className={`hero-content ${isTextHidden ? 'hidden' : ''}`}>
                 <div className="hero-title">
@@ -166,3 +204,4 @@ export function Hero({
         </section>
     );
 }
+

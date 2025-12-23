@@ -303,7 +303,8 @@ export function MapHighlights() {
                             <p className="gallery-description">{selectedCard.description}</p>
                         </div>
 
-                        <div className="gallery-main">
+                        {/* Desktop view: Single image with navigation arrows */}
+                        <div className="gallery-main gallery-desktop">
                             <button className="gallery-nav prev" onClick={prevImage}>‹</button>
                             <div className="gallery-image-container">
                                 <img
@@ -316,18 +317,34 @@ export function MapHighlights() {
                             <button className="gallery-nav next" onClick={nextImage}>›</button>
                         </div>
 
-                        <div className="gallery-counter">
-                            {selectedImageIndex + 1} / {getCurrentImages(selectedCard).length}
+                        {/* Desktop: Counter and thumbnails */}
+                        <div className="gallery-desktop">
+                            <div className="gallery-counter">
+                                {selectedImageIndex + 1} / {getCurrentImages(selectedCard).length}
+                            </div>
+
+                            <div className="gallery-thumbnails">
+                                {getCurrentImages(selectedCard).map((img, index) => (
+                                    <div
+                                        key={index}
+                                        className={`gallery-thumb ${index === selectedImageIndex ? 'active' : ''}`}
+                                        onClick={() => setSelectedImageIndex(index)}
+                                    >
+                                        <img src={img} alt={`Thumbnail ${index + 1}`} loading="lazy" />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
-                        <div className="gallery-thumbnails">
+                        {/* Mobile view: All images as scrollable list */}
+                        <div className="gallery-mobile-list">
                             {getCurrentImages(selectedCard).map((img, index) => (
-                                <div
-                                    key={index}
-                                    className={`gallery-thumb ${index === selectedImageIndex ? 'active' : ''}`}
-                                    onClick={() => setSelectedImageIndex(index)}
-                                >
-                                    <img src={img} alt={`Thumbnail ${index + 1}`} loading="lazy" />
+                                <div key={index} className="gallery-list-item">
+                                    <img
+                                        src={img}
+                                        alt={`${selectedCard.title} ${index + 1}`}
+                                        loading="lazy"
+                                    />
                                 </div>
                             ))}
                         </div>

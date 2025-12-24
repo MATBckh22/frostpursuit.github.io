@@ -2,8 +2,9 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 
-type Language = 'en' | 'zh';
+
 
 interface ImageFigureProps {
     src: string;
@@ -26,61 +27,6 @@ function ImageFigure({ src, caption, figNum }: ImageFigureProps) {
     );
 }
 
-// Carousel component for subsections
-interface SubsectionCarouselProps {
-    subsections: { title: string; desc: string }[];
-}
-
-function SubsectionCarousel({ subsections }: SubsectionCarouselProps) {
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    const goToPrevious = () => {
-        setCurrentIndex((prev) => (prev === 0 ? subsections.length - 1 : prev - 1));
-    };
-
-    const goToNext = () => {
-        setCurrentIndex((prev) => (prev === subsections.length - 1 ? 0 : prev + 1));
-    };
-
-    if (!subsections || subsections.length === 0) return null;
-
-    return (
-        <div className="subsection-carousel">
-            <button className="carousel-btn carousel-prev" onClick={goToPrevious} aria-label="Previous">
-                ‹
-            </button>
-            <div className="carousel-content">
-                <div className="carousel-card">
-                    <h4>{subsections[currentIndex].title}</h4>
-                    <p>{subsections[currentIndex].desc}</p>
-                </div>
-                <div className="carousel-indicators">
-                    {subsections.map((_, idx) => (
-                        <button
-                            key={idx}
-                            className={`carousel-dot ${idx === currentIndex ? 'active' : ''}`}
-                            onClick={() => setCurrentIndex(idx)}
-                            aria-label={`Go to slide ${idx + 1}`}
-                        />
-                    ))}
-                </div>
-            </div>
-            <button className="carousel-btn carousel-next" onClick={goToNext} aria-label="Next">
-                ›
-            </button>
-        </div>
-    );
-}
-
-// Helper function to wrap symbols like () and * in spans with Inter font
-function renderWithSymbols(text: string) {
-    // Split on symbols, keeping the delimiters
-    const parts = text.split(/([()*/×+\-=→＞<>])/);
-    return parts.map((part, index) =>
-        /[()*/×+\-=→＞<>]/.test(part) ? <span key={index} className="symbol-text">{part}</span> : part
-    );
-}
-
 // Content in both languages
 const content = {
     en: {
@@ -92,15 +38,38 @@ const content = {
         date: 'September 26, 2024',
         toc: 'Table of Contents',
         tocItems: [
-            'Initial Race UI',
-            'Returning Player UI (Whitelist)',
-            'Timer System',
-            'Insertion Sort Algorithm',
-            'Control Panel',
-            'Process Management',
-            'Nether Display',
-            'Overworld (Start & Finish)',
-            'Conclusion'
+            { title: 'Initial Race UI' },
+            { title: 'Returning Player UI (Whitelist)' },
+            {
+                title: 'Timer System',
+                subsections: [
+                    'Timer Overview',
+                    'Carry Rules',
+                    'Carry Processor'
+                ]
+            },
+            {
+                title: 'Insertion Sort Algorithm',
+                subsections: [
+                    'Comparison Logic'
+                ]
+            },
+            {
+                title: 'Control Panel',
+                subsections: [
+                    'Query Input',
+                    'Input to Algorithm',
+                    'Sync Box UI and Display',
+                    'Reset',
+                    'Start',
+                    'Stop',
+                    'Display Mode Switching'
+                ]
+            },
+            { title: 'Process Management' },
+            { title: 'Nether Display' },
+            { title: 'Overworld (Start & Finish)' },
+            { title: 'Conclusion' }
         ],
         overview: {
             caption: 'Top-down view of the coupled system components—this gives a general understanding of the layout.',
@@ -175,44 +144,54 @@ const content = {
                 items: [
                     {
                         title: '5.1 Query Input (Overworld Query)',
-                        desc: 'The query input is located in the Overworld. Players can input the ID of the player they want to query. The system will then search for the player\'s data in the database and display it on the Overworld display.',
-                        subsections: [
-                            {
-                                title: '5.1.1 Overworld UI',
-                                desc: 'The Overworld UI box displays historical player ID rankings from the insertion sort, with the sync operation introducing automatic updates later. On the right side, the lectern, note block, and redstone lamp serve as query controls. The query operation enables searching for player rankings within the insertion sort in the Overworld—displaying times from the full 10-hour-capable display for results. Since a large enough display for 10 records isn\'t feasible in the Overworld, a single query display is provided instead (Fig 5.1.9).'
-                            },
-                            {
-                                title: '5.1.2 Query Controls',
-                                desc: 'The lectern selects ranks 1-10 within the insertion sort. The note block confirms input, and the redstone lamp indicates operation status, preventing multiple inputs.'
-                            },
-                            {
-                                title: '5.1.3 Cross-Dimension Signal Transfer',
-                                desc: 'When players send ranking info, a shulker box filled with scissors is placed in the Overworld (Fig 5.1.3) for cross-dimension analog signal transfer (1-10). This is sent to the Nether insertion sort query input (Fig 5.1.4). The control panel\'s corresponding light illuminates. After the query completes (or times out with loading), the extracted 3-digit analog signal passes through the carry processor, converts via the analog-to-7-segment display-to-binary converter (Fig 5.1.5), outputs 23-bit binary encoded as non-stackable water bottles (Fig 5.1.6), transmits to the Overworld, decodes at the Overworld decoder (Fig 5.1.7), and outputs the 23-bit binary signal to the dedicated Overworld display (Fig 5.1.8, Fig 5.1.9) to read and show the time.'
-                            },
-                            {
-                                title: '5.1.4 Why Cross-Dimension Transmission?',
-                                desc: 'Why use this method for cross-dimension signal transfer? Can\'t we just send the analog signal directly to display the time after querying? Of course we could—but the main prerequisite is having space in the Overworld for a 7-segment display. As seen in Fig 5.1.10, the cabin atop the mountain has almost no space for a 7-segment display. Even the compact display in Fig 5.1.8 barely fits. So we designed this query system to adapt to the map. This way, the Overworld only needs to house the components from Fig 5.1.7 and Fig 5.1.8. Moreover, because binary signal transmission is very simple, the component in Fig 5.1.7 has almost no position requirements—it can be placed anywhere it fits. Admittedly, this transmission method takes more time, but even the fastest method isn\'t much faster. Real-time queries are inherently difficult. The display here mainly serves to show historical match rankings in the Overworld, rather than real-time queries.'
-                            }
+                        topImages: [
+                            { src: '图5.1.1 查询指示灯.png', caption: 'Fig 5.1.1 Query Indicator Light' },
+                            { src: '图5.1.2 主世界UI.png', caption: 'Fig 5.1.2 Overworld UI' }
+                        ],
+                        desc: [
+                            'The Box UI in the Overworld UI is used to display the player ID rankings of historical matches from the insertion sort, which automatically syncs after the sync operation introduced later.',
+                            'The lectern, note block, and redstone lamp on the right form the query panel. The query operation allows players to check the 3-digit analog signal (time score) from the insertion sort in the Overworld. Since the Overworld is not suitable for placing a huge display capable of showing 10 times, a single display is placed in the Overworld for queries (Fig 5.1.9).',
+                            'The lectern is used to select one of the 1-10 rankings in the insertion sort.',
+                            'The note block is used to confirm input, and the redstone lamp serves as a running indicator and prevents multiple inputs.',
+                            'After the player sends the ranking information, the Overworld will load a shulker box filled with shears (Fig 5.1.3) to transmit the analog signal (1-10) across dimensions to the query input location in the Nether insertion sort (Fig 5.1.4). At the same time, the corresponding light on the control panel lights up and turns off when the query is complete (loading will continue for a while). The retrieved 3-digit analog signal passes through the carry unit, and the converted signal is input into the Analog to 7-Segment Display Binary Converter (Fig 5.1.5). The output 23-bit binary signal is then converted into an encoder box composed of unstackables and water bottles (Fig 5.1.6) and transmitted to the Overworld. The Overworld decodes it (Fig 5.1.7) and outputs a 23-bit binary signal to the dedicated display (Fig 5.1.8, Fig 5.1.9) to read and display the time.'
                         ],
                         images: [
-                            { src: '图5.1.1 查询指示灯.png', caption: 'Fig 5.1.1 Query Indicator Light' },
-                            { src: '图5.1.2 主世界UI.png', caption: 'Fig 5.1.2 Overworld UI' },
                             { src: '图5.1.3 剪刀盒.png', caption: 'Fig 5.1.3 Scissor Box' },
                             { src: '图5.1.4 地狱端插入排序查询输入位置.png', caption: 'Fig 5.1.4 Nether Insertion Sort Query Input' },
-                            { src: '图5.1.9 主世界显示器.png', caption: 'Fig 5.1.9 Overworld Display' },
+                            { src: 'Analog-7 Segment Display-Binary Converter-min.webp', caption: 'Fig 5.1.5 Analog to 7-Segment Display Binary Converter' },
+                            { src: '26-Bit Serial Binary Box Transcoder-min.webp', caption: 'Fig 5.1.6 Serial Binary Box Encoder' },
+                            { src: '26-Bit 4gt Serial Binary Box Decoder-min.webp', caption: 'Fig 5.1.7 Serial Binary Box Decoder' },
+                            { src: '23-Bit Mini Time Display-min.webp', caption: 'Fig 5.1.8 Dedicated Display' },
+                            { src: '图5.1.9 主世界显示器.png', caption: 'Fig 5.1.9 Overworld Display' }
+                        ],
+                        qna: {
+                            question: 'Why use this cross-dimension transmission method? Can\'t we just directly send the corresponding analog signal to display the time after querying?',
+                            answer: 'Of course we can, but the prerequisite is that there is space in the Overworld to place a 7-segment display. As seen in Fig 5.1.10, there is almost no space under the hut on the mountain top to place a display with 7-segment tubes. Even the small-volume display in Fig 5.1.8 barely fits. So we designed this query system to adapt to the map. This way, only the components in Fig 5.1.7 and Fig 5.1.8 need to be placed in the Overworld. And because the binary signal transmission method is very simple, the component in Fig 5.1.7 has almost no requirements for location and can be stuffed anywhere it fits. Admittedly, this transmission method consumes more time, but even the fastest method is not much faster than this. Real-time querying itself is very difficult. The display here serves more to show the historical match leaderboard time in the Overworld, rather than real-time querying.'
+                        },
+                        bottomImages: [
                             { src: '图5.1.10 山体内饰与显示器.png', caption: 'Fig 5.1.10 Mountain Interior & Display' },
                             { src: '图5.1.11 山体内饰.png', caption: 'Fig 5.1.11 Mountain Interior' }
                         ]
                     },
                     {
-                        title: '5.2 Save Current Match',
-                        desc: 'This operation saves the current match data into the database. It is usually performed after a match is completed.',
-                        images: []
+                        title: '5.2 Input to Algorithm',
+                        desc: [
+                            'Corresponds to the second column of purple concrete on the control panel. Here, the bottom selector corresponds to the top running indicator light (Query and Load do not).',
+                            'The function is simple: input the data (3-digit analog signal and ID card) from the register in Fig 3.1.1 into the insertion sort algorithm in Fig 4.1. The algorithm will automatically sort the data (Section 4). The indicator light turns off when the operation is complete.'
+                        ],
+                        images: [
+                            { src: '图5.2.1 输入算法指示灯与单选.png', caption: 'Fig 5.2.1 Input Algorithm Indicator & Selector' }
+                        ]
                     },
                     {
-                        title: '5.3 Sync Top 10',
-                        desc: 'This operation synchronizes the top 10 players from the database to the display and the box UI. This ensures that the rankings are up-to-date.',
-                        images: []
+                        title: '5.3 Sync Box UI and Display',
+                        desc: [
+                            'Corresponds to the third column of pink concrete on the control panel.',
+                            'The function is to synchronize the 3-digit analog signal (time) and ID card from the insertion sort in Fig 4.1 to the corresponding display and Box UI. That is, updating the historical match leaderboard display and Box UI.'
+                        ],
+                        images: [
+                            { src: '图5.3.1 同步盒子UI和显示器.png', caption: 'Fig 5.3.1 Sync Box UI and Display' }
+                        ]
                     },
                     {
                         title: '5.4 Clear Current Match',
@@ -293,15 +272,38 @@ const content = {
         date: '2024年09月26日',
         toc: '目錄',
         tocItems: [
-            '初次比賽UI',
-            '非初次比賽UI（白名單）',
-            '計時器',
-            '插入排序算法',
-            '控制面板',
-            '進程管理',
-            '地獄顯示器',
-            '主世界（起點與終點）',
-            '結尾'
+            { title: '初次比賽UI' },
+            { title: '非初次比賽UI（白名單）' },
+            {
+                title: '計時器系統',
+                subsections: [
+                    '計時器概述',
+                    '進位規則',
+                    '進位處理器'
+                ]
+            },
+            {
+                title: '插入排序演算法',
+                subsections: [
+                    '比較邏輯'
+                ]
+            },
+            {
+                title: '控制面板',
+                subsections: [
+                    '查詢輸入',
+                    '輸入至演算法',
+                    '同步盒UI與顯示屏',
+                    '重置',
+                    '開始',
+                    '暫停',
+                    '顯示屏模式切換'
+                ]
+            },
+            { title: '流程管理' },
+            { title: '地獄顯示屏' },
+            { title: '主世界（起點與終點）' },
+            { title: '結語' }
         ],
         overview: {
             caption: '系統各個部件耦合後的俯視圖 通過此圖能大致了解布局',
@@ -375,496 +377,644 @@ const content = {
                 h3: '可用操作',
                 items: [
                     {
-                        title: '5.1 查詢 輸入（主世界查詢）',
-                        desc: '查詢輸入位於主世界。玩家可以輸入想要查詢的玩家ID。系統隨後會在數據庫中搜索該玩家的數據，並將其顯示在主世界顯示器上。',
-                        subsections: [
-                            {
-                                title: '5.1.1 主世界UI',
-                                desc: '主世界UI的盒子UI用於顯示插入排序中歷史對局的玩家ID排名，在後續介紹的同步操作後自動同步。右側講台、音符盒、紅石燈則為查詢的面板。查詢操作是為了在主世界能夠查詢插入排序中的三位模電信號，即時間成績。由於主世界並不適合放置一個巨大的能夠顯示10個時間的顯示器，所以放一個顯示器在主世界用於查詢（圖5.1.9）。'
-                            },
-                            {
-                                title: '5.1.2 查詢控制',
-                                desc: '講台用於選取1~10在插入排序中的不同排名。音符盒用於確認輸入，紅石燈為運行指示，並防止多次輸入。'
-                            },
-                            {
-                                title: '5.1.3 跨維度信號傳輸',
-                                desc: '當玩家發送排名信息後，主世界會裝填一個由剪刀填充的潛影盒（圖5.1.3）用來跨維度傳輸模電信號(1~10)，並發送到地獄端插入排序中查詢輸入的位置（圖5.1.4）。同時控制面板對應的燈亮起。查詢完畢後熄滅（加載則會持續一段時間）。取出的三位模電信號經過進位器後，轉換的信號輸入模轉七段數碼管轉二進制（圖5.1.5），輸出的23bit二進制信號再轉換為由不可堆疊與水瓶組成的編碼盒（圖5.1.6）後傳輸到主世界，主世界解碼（圖5.1.7）後輸出23bit的二進制信號給專用的顯示器（圖5.1.8 圖5.1.9）讀取並顯示時間。'
-                            },
-                            {
-                                title: '5.1.4 為什麼要跨維度傳輸？',
-                                desc: '為什麼要用這樣的方式跨維度傳輸信號呢？查詢後直接發送對應模電信號顯示時間不行嗎？當然可以，但這一切的大前提是主世界有空間放置七段數碼管的顯示器。從圖5.1.10中可以看出，山頂的小屋下幾乎沒有空間能夠放置帶七段數碼管的顯示器了。即使是圖5.1.8的小體積顯示器也只是堪堪放下。於是我們設計了這一套查詢系統來適配地圖。這樣一來，主世界就只需要放置圖5.1.7與圖5.1.8的部件即可。並且因為二進制信號的傳輸方式十分簡單，圖5.1.7的部件對位置幾乎沒有要求，可以塞在任意能塞得下的地方。誠然，這樣的傳輸方式會消耗更多的時間，但即使是最快的方式也並沒有比這種方式快多少。實時查詢本身就十分困難，這裡的顯示器更多起到的是在主世界顯示歷史對局排行榜時間的作用，而不是實時查詢。'
-                            }
+                        title: '5.1 Query Input (Overworld Query)',
+                        topImages: [
+                            { src: '图5.1.1 查询指示灯.png', caption: 'Fig 5.1.1 Query Indicator Light' },
+                            { src: '图5.1.2 主世界UI.png', caption: 'Fig 5.1.2 Overworld UI' }
+                        ],
+                        desc: [
+                            'The Box UI in the Overworld UI is used to display the player ID rankings of historical matches from the insertion sort, which automatically syncs after the sync operation introduced later.',
+                            'The lectern, note block, and redstone lamp on the right form the query panel. The query operation allows players to check the 3-digit analog signal (time score) from the insertion sort in the Overworld. Since the Overworld is not suitable for placing a huge display capable of showing 10 times, a single display is placed in the Overworld for queries (Fig 5.1.9).',
+                            'The lectern is used to select one of the 1-10 rankings in the insertion sort.',
+                            'The note block is used to confirm input, and the redstone lamp serves as a running indicator and prevents multiple inputs.',
+                            'After the player sends the ranking information, the Overworld will load a shulker box filled with shears (Fig 5.1.3) to transmit the analog signal (1-10) across dimensions to the query input location in the Nether insertion sort (Fig 5.1.4). At the same time, the corresponding light on the control panel lights up and turns off when the query is complete (loading will continue for a while). The retrieved 3-digit analog signal passes through the carry unit, and the converted signal is input into the Analog to 7-Segment Display Binary Converter (Fig 5.1.5). The output 23-bit binary signal is then converted into an encoder box composed of unstackables and water bottles (Fig 5.1.6) and transmitted to the Overworld. The Overworld decodes it (Fig 5.1.7) and outputs a 23-bit binary signal to the dedicated display (Fig 5.1.8, Fig 5.1.9) to read and display the time.'
                         ],
                         images: [
-                            { src: '图5.1.1 查询指示灯.png', caption: '圖5.1.1 查詢指示燈' },
-                            { src: '图5.1.2 主世界UI.png', caption: '圖5.1.2 主世界UI' },
-                            { src: '图5.1.3 剪刀盒.png', caption: '圖5.1.3 剪刀盒' },
-                            { src: '图5.1.4 地狱端插入排序查询输入位置.png', caption: '圖5.1.4 地獄端插入排序查詢輸入位置' },
-                            { src: '图5.1.9 主世界显示器.png', caption: '圖5.1.9 主世界顯示器' },
-                            { src: '图5.1.10 山体内饰与显示器.png', caption: '圖5.1.10 山體內飾與顯示器' },
-                            { src: '图5.1.11 山体内饰.png', caption: '圖5.1.11 山體內飾' }
+                            { src: '图5.1.3 剪刀盒.png', caption: 'Fig 5.1.3 Scissor Box' },
+                            { src: '图5.1.4 地狱端插入排序查询输入位置.png', caption: 'Fig 5.1.4 Nether Insertion Sort Query Input' },
+                            { src: 'Analog-7 Segment Display-Binary Converter-min.webp', caption: 'Fig 5.1.5 Analog to 7-Segment Display Binary Converter' },
+                            { src: '26-Bit Serial Binary Box Transcoder-min.webp', caption: 'Fig 5.1.6 Serial Binary Box Encoder' },
+                            { src: '26-Bit 4gt Serial Binary Box Decoder-min.webp', caption: 'Fig 5.1.7 Serial Binary Box Decoder' },
+                            { src: '23-Bit Mini Time Display-min.webp', caption: 'Fig 5.1.8 Dedicated Display' },
+                            { src: '图5.1.9 主世界显示器.png', caption: 'Fig 5.1.9 Overworld Display' }
+                        ],
+                        qna: {
+                            question: 'Why use this cross-dimension transmission method? Can\'t we just directly send the corresponding analog signal to display the time after querying?',
+                            answer: 'Of course we can, but the prerequisite is that there is space in the Overworld to place a 7-segment display. As seen in Fig 5.1.10, there is almost no space under the hut on the mountain top to place a display with 7-segment tubes. Even the small-volume display in Fig 5.1.8 barely fits. So we designed this query system to adapt to the map. This way, only the components in Fig 5.1.7 and Fig 5.1.8 need to be placed in the Overworld. And because the binary signal transmission method is very simple, the component in Fig 5.1.7 has almost no requirements for location and can be stuffed anywhere it fits. Admittedly, this transmission method consumes more time, but even the fastest method is not much faster than this. Real-time querying itself is very difficult. The display here serves more to show the historical match leaderboard time in the Overworld, rather than real-time querying.'
+                        },
+                        bottomImages: [
+                            { src: '图5.1.10 山体内饰与显示器.png', caption: 'Fig 5.1.10 Mountain Interior & Display' },
+                            { src: '图5.1.11 山体内饰.png', caption: 'Fig 5.1.11 Mountain Interior' }
                         ]
                     },
                     {
-                        title: '5.2 把當前對局的成績輸入插入排序算法',
-                        desc: '此操作將當前比賽數據保存到數據庫中。通常在比賽結束後執行。',
-                        images: []
-                    },
-                    {
-                        title: '5.3 同步歷史前十名的盒子UI和顯示器',
-                        desc: '此操作將數據庫中的前10名玩家同步到顯示器和盒子UI。這確保了排名是最新的。',
-                        images: []
-                    },
-                    {
-                        title: '5.4 清空當前對局的寄存器',
-                        desc: '此操作清除當前比賽的數據。如果需要重新開始比賽或出現錯誤，這很有用。',
-                        images: []
-                    },
-                    {
-                        title: '5.5 區塊加載器運行',
-                        desc: '系統使用區塊加載器保持地獄中的相關區塊加載。這確保了即使沒有玩家在附近，紅石電路也能繼續工作。',
+                        title: '5.2 Input to Algorithm',
+                        desc: [
+                            'Corresponds to the second column of purple concrete on the control panel. Here, the bottom selector corresponds to the top running indicator light (Query and Load do not).',
+                            'The function is simple: input the data (3-digit analog signal and ID card) from the register in Fig 3.1.1 into the insertion sort algorithm in Fig 4.1. The algorithm will automatically sort the data (Section 4). The indicator light turns off when the operation is complete.'
+                        ],
                         images: [
-                            { src: 'Nether Portal Chunk Loader-min.webp', caption: '圖5.5.2 地獄門加載器' }
+                            { src: '图5.2.1 输入算法指示灯与单选.png', caption: 'Fig 5.2.1 Input Algorithm Indicator & Selector' }
                         ]
                     },
                     {
-                        title: '5.6 重置系統',
-                        desc: '此操作將整個系統重置為初始狀態。這是一個危險的操作，應僅在必要時使用。',
+                        title: '5.3 Sync Box UI and Display',
+                        desc: [
+                            'Corresponds to the third column of pink concrete on the control panel.',
+                            'The function is to synchronize the 3-digit analog signal (time) and ID card from the insertion sort in Fig 4.1 to the corresponding display and Box UI. That is, updating the historical match leaderboard display and Box UI.'
+                        ],
+                        images: [
+                            { src: '图5.3.1 同步盒子UI和显示器.png', caption: 'Fig 5.3.1 Sync Box UI and Display' }
+                        ]
+                    },
+                    {
+                        title: '5.4 Clear Current Match',
+                        desc: 'This operation clears the data of the current match. This is useful if a match needs to be restarted or if there was an error.',
                         images: []
                     },
                     {
-                        title: '5.7 遊戲時鐘',
-                        desc: '遊戲時鐘跟蹤當前比賽經過的時間。它顯示在記分板上。',
+                        title: '5.5 Chunk Loader',
+                        desc: 'The system uses a chunk loader to keep the relevant chunks loaded in the Nether. This ensures that the redstone circuits continue to work even when no players are nearby.',
+                        images: [
+                            { src: 'Nether Portal Chunk Loader-min.webp', caption: 'Fig 5.5.2 Nether Portal Chunk Loader' }
+                        ]
+                    },
+                    {
+                        title: '5.6 Reset System',
+                        desc: 'This operation resets the entire system to its initial state. This is a dangerous operation and should only be used when necessary.',
+                        images: []
+                    },
+                    {
+                        title: '5.7 Game Clock',
+                        desc: 'The game clock tracks the time elapsed in the current match. It is displayed on the scoreboard.',
                         images: []
                     }
                 ]
             },
             process: {
-                title: '進程管理（優先級隊列）',
-                caption: '圖6.1 進程管理（優先級隊列）',
-                p1: '從章節5.1到章節5.4中的介紹可以知道，在執行這四個操作時，它們都是互相衝突的。比如查詢的過程算法無法進行計算的操作，同步的時候無法進行查詢的操作。所以我們需要一個進程管理來保證玩家每次輸入操作後都只有一個進程在運行。',
-                p2: '玩家在單選器輸出的信號都會先到進程管理進行處理，進程管理會判斷是否有進程正在運行，若有則會等待此進程完成後再進行下一個進程。簡單來說就是在某一時刻保證只有一個進程正在運行。'
+                title: 'Process Management (Priority Queue)',
+                caption: 'Fig 6.1 Process Management (Priority Queue)',
+                p1: 'From sections 5.1 to 5.4, we know that these four operations conflict with each other. For example, the query process cannot perform calculation operations, and sync cannot perform query operations. So we need a process manager to ensure that only one process runs after each player input operation.',
+                p2: 'Signals output by the player at the selector will first be processed by the process manager. The process manager checks if a process is running; if so, it waits for that process to complete before starting the next one. Simply put, it ensures only one process runs at any given time.'
             },
             display: {
-                title: '地獄顯示器',
+                title: 'Nether Display',
                 captions: [
-                    '圖7.1 地獄顯示器（左 歷史對局 右 當前對局）',
-                    '圖7.2 顯示器單元',
-                    '圖5.1.5 模轉七段數碼管轉二進制',
-                    '圖5.1.6 串行二進制轉編碼盒 26bit',
-                    '圖7.3 低延遲比較器鏈單元（每個單元2gt）',
-                    '圖7.4 無延遲模電下傳（BED編碼）'
+                    'Fig 7.1 Nether Display (Left: Historical Matches, Right: Current Match)',
+                    'Fig 7.2 Display Unit',
+                    'Fig 5.1.5 Analog to 7-Segment Display Binary Converter',
+                    'Fig 5.1.6 Serial Binary Box Encoder (26-bit)',
+                    'Fig 7.3 Low-Latency Comparator Chain Unit (2gt per unit)',
+                    'Fig 7.4 Latency-Free Analog Downlink (BED Encoding)'
                 ],
-                h3: '跨維度傳輸',
-                p1: '地獄這裡的顯示器只是用七段數碼管的顯示器，信號傳遞是從下往上的。但由於主世界冰山上的小屋y值很高，對應整個系統也做的很高（要考慮跨維度信息傳遞），所以從系統中發送的當前對局與歷史對局信號也需要先下傳再上傳。為了讓玩家到達終點後穿過地獄門能盡快看到成績，這裡傳輸信號用了低延遲的比較器鏈（每個單元2gt），下傳用了BED編碼，能做到無視高度的20gt下傳。'
+                h3: 'Cross-Dimension Transmission',
+                p1: 'The Nether display simply uses 7-segment displays, with signals transmitting bottom-to-top. However, since the overworld cabin on the ice mountain has a high Y value, the entire system is built high (considering cross-dimension data transmission), so current and historical match signals sent from the system need to first go down, then up. To let players see their results quickly after crossing the finish line and passing through the Nether portal, the signal uses low-latency comparator chains (2gt per unit), and downlink uses BED encoding—achieving 20gt downlink regardless of height.'
             },
             overworld: {
-                title: '主世界（起點與終點）',
-                caption1: '圖8.1 起點UI',
-                caption2: '圖8.2 key',
-                caption3: '圖8.3 終點',
-                caption4: '圖8.4 瞬投与船分离'
+                title: 'Overworld (Start & Finish)',
+                caption1: 'Fig 8.1 Start UI',
+                caption2: 'Fig 8.2 Key',
+                caption3: 'Fig 8.3 Finish Line',
+                caption4: 'Fig 8.4 Instant Dropper & Boat Separation'
             },
             appendix: {
-                title: '附錄',
+                title: 'Appendix',
                 images: [
-                    { src: '侧视图.png', caption: '側視圖' },
-                    { src: '传输链.png', caption: '傳輸鏈' },
-                    { src: '显示器.png', caption: '顯示器' },
-                    { src: '俯视图.png', caption: '俯視圖' }
+                    { src: '侧视图.png', caption: 'Side View' },
+                    { src: '传输链.png', caption: 'Transmission Chain' },
+                    { src: '显示器.png', caption: 'Display' },
+                    { src: '俯视图.png', caption: 'Top View' }
                 ]
             },
             credits: {
-                title: '結尾',
-                building: '建築',
-                redstone: '紅石',
-                thanks: '借物表',
-                original: '原文：',
-                endingNote: '到這裡正文基本就結束了。說是詳細解釋其實也沒有特別詳細，真正把整個設計思路羅列清楚估計文章會很枯燥無味。系統的亮點在於算法自動排序歷史成績，以及各個部分的耦合，部件之間互相關聯，整個系統幾乎都是在幕後工作的，所以理論上能應用在任何一個競速類項目。'
+                title: 'Conclusion',
+                building: 'Building',
+                redstone: 'Redstone',
+                thanks: 'Credits & Thanks',
+                original: 'Original article:',
+                endingNote: 'That wraps up the main content. While it claims to be a detailed explanation, it\'s not exhaustively detailed—truly laying out every design thought would probably make the article quite dry. The system\'s highlights are the algorithm automatically sorting historical scores, plus the coupling between all components—parts relate to each other, and the entire system works almost entirely behind the scenes. In theory, it could be applied to any racing-type project.'
             }
         },
-        learnMore: '了解更多'
+        learnMore: 'Learn More'
     }
 };
 
 export function RedstoneBlog() {
-    const [lang, setLang] = useState<Language>('en');
+    const { lang } = useLanguage();
     const t = content[lang];
+
+    const [activeSection, setActiveSection] = useState<string>('');
 
     useEffect(() => {
         window.scrollTo(0, 0);
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            {
+                rootMargin: '-20% 0px -35% 0px',
+                threshold: 0.1
+            }
+        );
+
+        const sections = document.querySelectorAll('section[id^="section-"]');
+        sections.forEach((section) => observer.observe(section));
+
+        // Observe all subsections
+        const subsections = document.querySelectorAll('div[id^="section-"]');
+        subsections.forEach((section) => observer.observe(section));
+
+        return () => {
+            sections.forEach((section) => observer.unobserve(section));
+            subsections.forEach((section) => observer.unobserve(section));
+        };
     }, []);
+
+    const scrollToSection = (id: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+            const offset = 80; // Adjust for sticky header if needed
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    const renderWithSymbols = (text: string) => {
+        // Apply text replacements for Chinese
+        let processedText = text;
+        if (lang === 'zh') {
+            processedText = text.replace('計時器', '計時器系統').replace('算法', '演算法').replace('結尾', '結語').replace('顯示器', '顯示屏');
+        }
+        // Wrap symbols in spans with Inter font
+        const parts = processedText.split(/([()*/×+\-=→＞<>（）])/);
+        return parts.map((part, index) =>
+            /[()*/×+\-=→＞<>（）]/.test(part) ? <span key={index} className="symbol-text">{part}</span> : part
+        );
+    };
 
     return (
         <>
             <Navbar forceTheme="redstone" />
             <main className={`blog-main ${lang === 'zh' ? 'lang-zh' : 'lang-en'}`}>
                 <article className="blog-article">
-                    {/* Header Row: Back Button + Language Toggle */}
+                    {/* Header Row: Back Button */}
                     <div className="blog-header-row">
                         <Link to="/" className="blog-back-btn">
                             <span className="back-arrow">←</span> {t.backBtn}
                         </Link>
-                        <div className="blog-lang-toggle">
-                            <button
-                                className={lang === 'en' ? 'active' : ''}
-                                onClick={() => setLang('en')}
-                            >
-                                EN
-                            </button>
-                            <span className="lang-divider">/</span>
-                            <button
-                                className={lang === 'zh' ? 'active' : ''}
-                                onClick={() => setLang('zh')}
-                            >
-                                繁中
-                            </button>
-                        </div>
                     </div>
 
-                    {/* Hero Section */}
-                    <header className="blog-hero">
-                        <div className="blog-hero-content">
-                            <span className="blog-category">{t.category}</span>
-                            <h1>{renderWithSymbols(t.title)}</h1>
-                            <p className="blog-subtitle">{t.subtitle}</p>
-                            <div className="blog-meta">
-                                <span>By <strong>{t.author}</strong></span>
-                                <span className="meta-divider">•</span>
-                                <span>{t.date}</span>
+                    <div className="blog-container">
+                        {/* Sidebar TOC */}
+                        <aside className="blog-sidebar">
+                            <div className="sticky-toc">
+                                <ul>
+                                    {t.tocItems.map((item, index) => (
+                                        <li key={index}>
+                                            <button
+                                                className={activeSection === `section-${index + 1}` || activeSection.startsWith(`section-${index + 1}-`) ? 'active' : ''}
+                                                onClick={() => scrollToSection(`section-${index + 1}`)}
+                                            >
+                                                {renderWithSymbols(item.title)}
+                                            </button>
+                                            {item.subsections && (
+                                                <ul className={`toc-subsections ${activeSection === `section-${index + 1}` || activeSection.startsWith(`section-${index + 1}-`) ? 'open' : ''}`}>
+                                                    {item.subsections.map((sub, subIndex) => (
+                                                        <li key={subIndex}>
+                                                            <button
+                                                                className={activeSection === `section-${index + 1}-${subIndex + 1}` ? 'active' : ''}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    scrollToSection(`section-${index + 1}-${subIndex + 1}`);
+                                                                }}
+                                                            >
+                                                                {renderWithSymbols(sub)}
+                                                            </button>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                        </div>
-                    </header>
+                        </aside>
 
-                    {/* Table of Contents */}
-                    <nav className="blog-toc">
-                        <h2>{t.toc}</h2>
-                        <ol>
-                            {t.tocItems.map((item, i) => (
-                                <li key={i}><a href={`#section-${i + 1}`}>{renderWithSymbols(item)}</a></li>
-                            ))}
-                        </ol>
-                    </nav>
-
-                    {/* Overview */}
-                    <section className="blog-section">
-                        <ImageFigure
-                            src="Overview-min.webp"
-                            caption={t.overview.caption}
-                            figNum="Fig 0.1"
-                        />
-                        <p className="blog-lead">{t.overview.lead}</p>
-                    </section>
-
-                    {/* Section 1: Registration */}
-                    <section className="blog-section" id="section-1">
-                        <h2><span className="section-num">1</span>{t.sections.registration.title}</h2>
-                        <ImageFigure
-                            src="Initial Race Registration UI-min.webp"
-                            caption={t.sections.registration.caption}
-                            figNum="Fig 1.1"
-                        />
-                        <p>{t.sections.registration.p1}</p>
-                        <ImageFigure
-                            src="图1.2 命名物输入示例.png"
-                            caption={t.sections.registration.caption2}
-                            figNum="Fig 1.2"
-                        />
-                        <div className="blog-callout blog-callout-info">
-                            <strong>{lang === 'en' ? 'Note:' : '注意：'}</strong> {t.sections.registration.note.replace('Note: ', '').replace('注意：', '')}
-                        </div>
-                        <p>{t.sections.registration.p2}</p>
-                    </section>
-
-                    {/* Section 2: Whitelist */}
-                    <section className="blog-section" id="section-2">
-                        <h2><span className="section-num">2</span>{renderWithSymbols(t.sections.whitelist.title)}</h2>
-                        <ImageFigure
-                            src="Race Whitelist Login UI-min.webp"
-                            caption={t.sections.whitelist.caption}
-                            figNum="Fig 2.1"
-                        />
-                        <p>{t.sections.whitelist.p1}</p>
-                        <ImageFigure
-                            src="图2.2 箱子内容展示.png"
-                            caption={t.sections.whitelist.caption2}
-                            figNum="Fig 2.2"
-                        />
-                        <p>{t.sections.whitelist.p2}</p>
-                        <ul className="blog-list">
-                            <li><strong>{lang === 'en' ? 'If invalid:' : '若不符合：'}</strong> {t.sections.whitelist.invalid.replace('If invalid: ', '').replace('若不符合（即箱子內無此命名物）：', '')}</li>
-                            <li><strong>{lang === 'en' ? 'If valid:' : '若符合：'}</strong> {t.sections.whitelist.valid.replace('If valid: ', '').replace('若符合（箱子內有同樣的命名物）：', '')}</li>
-                        </ul>
-                        <ImageFigure
-                            src="图2.3 终点非法输入.png"
-                            caption={t.sections.whitelist.caption3}
-                            figNum="Fig 2.3"
-                        />
-                    </section>
-
-                    {/* Section 3: Timer */}
-                    <section className="blog-section" id="section-3">
-                        <h2><span className="section-num">3</span>{t.sections.timer.title}</h2>
-                        <ImageFigure
-                            src="3-Layer Timer with Shift Registers-min.webp"
-                            caption={t.sections.timer.caption1}
-                            figNum="Fig 3.1"
-                        />
-
-                        <h3>{t.sections.timer.h31}</h3>
-                        <p>{t.sections.timer.p1}</p>
-                        <p>{t.sections.timer.p1b}</p>
-                        <ImageFigure
-                            src="图3.1.2 三位模电信号(14分03秒).png"
-                            caption={t.sections.timer.caption2}
-                            figNum="Fig 3.1.2"
-                        />
-
-                        <h3>{t.sections.timer.h32}</h3>
-                        <p>{t.sections.timer.p2}</p>
-                        <pre className="blog-code">
-                            {`0:59 → 0:60 (internal) → 1:01 (display)
-     ↑ 20gt delay        ↑ simultaneous update`}
-                        </pre>
-                        <p>{t.sections.timer.p3}</p>
-
-                        <h3>{t.sections.timer.h33}</h3>
-                        <p>{t.sections.timer.p4}</p>
-                        <p>{t.sections.timer.p4b}</p>
-
-                        <ImageFigure
-                            src="Analog-7 Segment Display-Binary Converter-min.webp"
-                            caption={t.sections.timer.caption3}
-                            figNum="Fig 3.3.1"
-                        />
-                        <ImageFigure
-                            src="图3.3.2 进位器位置.png"
-                            caption={t.sections.timer.caption4}
-                            figNum="Fig 3.3.2"
-                        />
-                    </section>
-
-                    {/* Section 4: Sorting */}
-                    <section className="blog-section" id="section-4">
-                        <h2><span className="section-num">4</span>{t.sections.sorting.title}</h2>
-                        <ImageFigure
-                            src="Insertion Sort Module-min.webp"
-                            caption={t.sections.sorting.caption1}
-                            figNum="Fig 4.1"
-                        />
-                        <p className="blog-lead">{t.sections.sorting.lead}</p>
-
-                        <h3>{t.sections.sorting.h3}</h3>
-                        <p>{t.sections.sorting.p1}</p>
-
-                        <div className="blog-steps">
-                            {t.sections.sorting.steps.map((step, i) => (
-                                <div className="blog-step" key={i}>
-                                    <span className="step-num">{i + 1}</span>
-                                    <div><strong>{step.split(':')[0]}:</strong>{step.split(':').slice(1).join(':')}</div>
+                        <div className="blog-content-wrapper">
+                            <header className="blog-hero">
+                                <span className="blog-category">{t.category}</span>
+                                <h1>{lang === 'zh' ? t.title : renderWithSymbols(t.title)}</h1>
+                                <p className="blog-subtitle">{t.subtitle}</p>
+                                <div className="blog-meta">
+                                    <span>{t.author}</span>
+                                    <span>•</span>
+                                    <span>{t.date}</span>
                                 </div>
-                            ))}
-                        </div>
+                            </header>
 
-                        <ImageFigure
-                            src="图4.2 算法布线实现.png"
-                            caption={t.sections.sorting.caption2}
-                            figNum="Fig 4.2"
-                        />
+                            {/* Table of Contents */}
+                            <nav className="blog-toc">
+                                <h2>{t.toc}</h2>
+                                <ol>
+                                    {t.tocItems.map((item, i) => (
+                                        <li key={i}>
+                                            <a href={`#section-${i + 1}`}>{renderWithSymbols(item.title)}</a>
+                                            {item.subsections && (
+                                                <ol>
+                                                    {item.subsections.map((sub, subIndex) => (
+                                                        <li key={subIndex}>
+                                                            <a href={`#section-5-${subIndex + 1}`}>{renderWithSymbols(sub)}</a>
+                                                        </li>
+                                                    ))}
+                                                </ol>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ol>
+                            </nav>
 
-                        <ImageFigure
-                            src="Insertion Sort Unit-min.webp"
-                            caption={t.sections.sorting.caption3}
-                            figNum="Fig 4.3"
-                        />
-
-                        <div className="blog-callout blog-callout-warning">
-                            <strong>{lang === 'en' ? 'Design Trade-off:' : '設計權衡：'}</strong> {t.sections.sorting.warning.replace('Design Trade-off: ', '').replace('設計權衡：', '')}
-                        </div>
-
-                        <ImageFigure
-                            src="图4.4 ID卡储存.png"
-                            caption={t.sections.sorting.caption4}
-                            figNum="Fig 4.4"
-                        />
-                        <p>{t.sections.sorting.p2}</p>
-                        <p>{t.sections.sorting.p3}</p>
-
-                        <ImageFigure
-                            src="图4.5 48物品存放.png"
-                            caption={t.sections.sorting.caption5}
-                            figNum="Fig 4.5"
-                        />
-                        <p>{t.sections.sorting.p4}</p>
-
-                        <ImageFigure
-                            src="图4.6 盒子UI示例.png"
-                            caption={t.sections.sorting.caption6}
-                            figNum="Fig 4.6"
-                        />
-                        <p>{t.sections.sorting.p5}</p>
-                        <p>{t.sections.sorting.p6}</p>
-                        <p><a href="https://www.bilibili.com/video/BV1uT4y1P7CX" target="_blank" rel="noopener noreferrer">{t.sections.sorting.link}</a></p>
-
-                        <ImageFigure
-                            src="Generated Box UI Reverse Loader-min.webp"
-                            caption={t.sections.sorting.caption7}
-                            figNum="Fig 4.7"
-                        />
-                    </section>
-
-                    {/* Section 5: Control */}
-                    <section className="blog-section" id="section-5">
-                        <h2><span className="section-num">5</span>{t.sections.control.title}</h2>
-                        <ImageFigure
-                            src="图5 控制面板.png"
-                            caption={t.sections.control.caption1}
-                            figNum="Fig 5"
-                        />
-
-                        <p>{t.sections.control.p1}</p>
-
-                        <div className="blog-subsections">
-                            {t.sections.control.items.map((item: any, i: number) => (
-                                <div className="blog-subsection" key={i}>
-                                    <h3>{item.title}</h3>
-                                    <p>{item.desc}</p>
-                                    {item.subsections && item.subsections.length > 0 && (
-                                        <SubsectionCarousel subsections={item.subsections} />
-                                    )}
-                                    {item.images && item.images.length > 0 && (
-                                        <div className="blog-image-grid">
-                                            {item.images.map((img: any, j: number) => (
-                                                <ImageFigure
-                                                    key={j}
-                                                    src={img.src}
-                                                    caption={img.caption}
-                                                    figNum=""
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    {/* Section 6: Process Management */}
-                    <section className="blog-section" id="section-6">
-                        <h2><span className="section-num">6</span>{t.sections.process.title}</h2>
-                        <ImageFigure
-                            src="Process Manager (Priority Queue Based)-min.webp"
-                            caption={t.sections.process.caption}
-                            figNum="Fig 6.1"
-                        />
-                        <p>{t.sections.process.p1}</p>
-                        <p>{t.sections.process.p2}</p>
-                    </section>
-
-                    {/* Section 7: Display */}
-                    <section className="blog-section" id="section-7">
-                        <h2><span className="section-num">7</span>{t.sections.display.title}</h2>
-
-                        <div className="blog-image-grid">
-                            <ImageFigure
-                                src="图7.1 地狱显示器(左 历史对局  右 当前对局).png"
-                                caption={t.sections.display.captions[0]}
-                                figNum="Fig 7.1"
-                            />
-                            <ImageFigure
-                                src="Modular Display Unit-min.webp"
-                                caption={t.sections.display.captions[1]}
-                                figNum="Fig 7.2"
-                            />
-                            <ImageFigure
-                                src="Low-Latency Comparator Chain Unit-min.webp"
-                                caption={t.sections.display.captions[4]}
-                                figNum="Fig 7.3"
-                            />
-                            <ImageFigure
-                                src="Latency-Free Analog Downlink (BED Encoded)-min.webp"
-                                caption={t.sections.display.captions[5]}
-                                figNum="Fig 7.4"
-                            />
-                        </div>
-
-                        <h3>{t.sections.display.h3}</h3>
-                        <p>{t.sections.display.p1}</p>
-                    </section>
-
-                    {/* Section 8: Overworld */}
-                    <section className="blog-section" id="section-8">
-                        <h2><span className="section-num">8</span>{t.sections.overworld.title}</h2>
-                        <ImageFigure
-                            src="图8.1 起点UI.png"
-                            caption={t.sections.overworld.caption1}
-                            figNum="Fig 8.1"
-                        />
-                        <ImageFigure
-                            src="图8.2 key.png"
-                            caption={t.sections.overworld.caption2}
-                            figNum="Fig 8.2"
-                        />
-                        <ImageFigure
-                            src="图8.3 终点.png"
-                            caption={t.sections.overworld.caption3}
-                            figNum="Fig 8.3"
-                        />
-                        <ImageFigure
-                            src="图8.4 瞬投与船分离.png"
-                            caption={t.sections.overworld.caption4}
-                            figNum="Fig 8.4"
-                        />
-                    </section>
-
-                    {/* Appendix */}
-                    <section className="blog-section" id="section-appendix">
-                        <h2>{t.sections.appendix.title}</h2>
-                        <div className="blog-image-grid">
-                            {t.sections.appendix.images.map((img, i) => (
+                            {/* Overview */}
+                            <section className="blog-section">
                                 <ImageFigure
-                                    key={i}
-                                    src={img.src}
-                                    caption={img.caption}
-                                    figNum=""
+                                    src="Overview-min.webp"
+                                    caption={t.overview.caption}
+                                    figNum="Fig 0.1"
                                 />
-                            ))}
+                                <p className="blog-lead">{t.overview.lead}</p>
+                            </section>
+
+                            {/* Section 1: Registration */}
+                            <section className="blog-section">
+                                <p className="blog-lead">{t.overview.lead}</p>
+                            </section>
+
+                            {/* Section 1: Registration */}
+                            <section className="blog-section" id="section-1">
+                                <h2><span className="section-num">1</span>{t.sections.registration.title}</h2>
+                                <ImageFigure
+                                    src="Initial Race Registration UI-min.webp"
+                                    caption={t.sections.registration.caption}
+                                    figNum="Fig 1.1"
+                                />
+                                <p>{t.sections.registration.p1}</p>
+                                <ImageFigure
+                                    src="图1.2 命名物输入示例.png"
+                                    caption={t.sections.registration.caption2}
+                                    figNum="Fig 1.2"
+                                />
+                                <div className="blog-callout blog-callout-info">
+                                    <strong>{lang === 'en' ? 'Note:' : '注意：'}</strong> {t.sections.registration.note.replace('Note: ', '').replace('注意：', '')}
+                                </div>
+                                <p>{t.sections.registration.p2}</p>
+                            </section>
+
+                            {/* Section 2: Whitelist */}
+                            <section className="blog-section" id="section-2">
+                                <h2><span className="section-num">2</span>{renderWithSymbols(t.sections.whitelist.title)}</h2>
+                                <ImageFigure
+                                    src="Race Whitelist Login UI-min.webp"
+                                    caption={t.sections.whitelist.caption}
+                                    figNum="Fig 2.1"
+                                />
+                                <p>{t.sections.whitelist.p1}</p>
+                                <ImageFigure
+                                    src="图2.2 箱子内容展示.png"
+                                    caption={t.sections.whitelist.caption2}
+                                    figNum="Fig 2.2"
+                                />
+                                <p>{t.sections.whitelist.p2}</p>
+                                <ul className="blog-list">
+                                    <li><strong>{lang === 'en' ? 'If invalid:' : '若不符合：'}</strong> {t.sections.whitelist.invalid.replace('If invalid: ', '').replace('若不符合（即箱子內無此命名物）：', '')}</li>
+                                    <li><strong>{lang === 'en' ? 'If valid:' : '若符合：'}</strong> {t.sections.whitelist.valid.replace('If valid: ', '').replace('若符合（箱子內有同樣的命名物）：', '')}</li>
+                                </ul>
+                                <ImageFigure
+                                    src="图2.3 终点非法输入.png"
+                                    caption={t.sections.whitelist.caption3}
+                                    figNum="Fig 2.3"
+                                />
+                            </section>
+
+                            {/* Section 3: Timer */}
+                            <section className="blog-section" id="section-3">
+                                <h2><span className="section-num">3</span>{t.sections.timer.title}</h2>
+                                <ImageFigure
+                                    src="3-Layer Timer with Shift Registers-min.webp"
+                                    caption={t.sections.timer.caption1}
+                                    figNum="Fig 3.1"
+                                />
+
+                                <div id="section-3-1">
+                                    <h3>{t.sections.timer.h31}</h3>
+                                    <p>{t.sections.timer.p1}</p>
+                                    <p>{t.sections.timer.p1b}</p>
+                                    <ImageFigure
+                                        src="图3.1.2 三位模电信号(14分03秒).png"
+                                        caption={t.sections.timer.caption2}
+                                        figNum="Fig 3.1.2"
+                                    />
+                                </div>
+
+                                <div id="section-3-2">
+                                    <h3>{t.sections.timer.h32}</h3>
+                                    <p>{t.sections.timer.p2}</p>
+                                    <pre className="blog-code">
+                                        {`0:59 → 0:60 (internal) → 1:01 (display)
+     ↑ 20gt delay        ↑ simultaneous update`}
+                                    </pre>
+                                    <p>{t.sections.timer.p3}</p>
+                                </div>
+
+                                <div id="section-3-3">
+                                    <h3>{t.sections.timer.h33}</h3>
+                                    <p>{t.sections.timer.p4}</p>
+                                    <p>{t.sections.timer.p4b}</p>
+
+                                    <ImageFigure
+                                        src="Analog-7 Segment Display-Binary Converter-min.webp"
+                                        caption={t.sections.timer.caption3}
+                                        figNum="Fig 3.3.1"
+                                    />
+                                    <ImageFigure
+                                        src="图3.3.2 进位器位置.png"
+                                        caption={t.sections.timer.caption4}
+                                        figNum="Fig 3.3.2"
+                                    />
+                                </div>
+                            </section>
+
+                            {/* Section 4: Sorting */}
+                            <section className="blog-section" id="section-4">
+                                <h2><span className="section-num">4</span>{t.sections.sorting.title}</h2>
+                                <ImageFigure
+                                    src="Insertion Sort Module-min.webp"
+                                    caption={t.sections.sorting.caption1}
+                                    figNum="Fig 4.1"
+                                />
+                                <p className="blog-lead">{t.sections.sorting.lead}</p>
+
+                                <div id="section-4-1">
+                                    <h3>{t.sections.sorting.h3}</h3>
+                                    <p>{t.sections.sorting.p1}</p>
+
+                                    <div className="blog-steps">
+                                        {t.sections.sorting.steps.map((step, i) => (
+                                            <div className="blog-step" key={i}>
+                                                <span className="step-num">{i + 1}</span>
+                                                <div><strong>{step.split(':')[0]}:</strong>{step.split(':').slice(1).join(':')}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <ImageFigure
+                                    src="图4.2 算法布线实现.png"
+                                    caption={t.sections.sorting.caption2}
+                                    figNum="Fig 4.2"
+                                />
+
+                                <ImageFigure
+                                    src="Insertion Sort Unit-min.webp"
+                                    caption={t.sections.sorting.caption3}
+                                    figNum="Fig 4.3"
+                                />
+
+                                <div className="blog-callout blog-callout-warning">
+                                    <strong>{lang === 'en' ? 'Design Trade-off:' : '設計權衡：'}</strong> {t.sections.sorting.warning.replace('Design Trade-off: ', '').replace('設計權衡：', '')}
+                                </div>
+
+                                <ImageFigure
+                                    src="图4.4 ID卡储存.png"
+                                    caption={t.sections.sorting.caption4}
+                                    figNum="Fig 4.4"
+                                />
+                                <p>{t.sections.sorting.p2}</p>
+                                <p>{t.sections.sorting.p3}</p>
+
+                                <ImageFigure
+                                    src="图4.5 48物品存放.png"
+                                    caption={t.sections.sorting.caption5}
+                                    figNum="Fig 4.5"
+                                />
+                                <p>{t.sections.sorting.p4}</p>
+
+                                <ImageFigure
+                                    src="图4.6 盒子UI示例.png"
+                                    caption={t.sections.sorting.caption6}
+                                    figNum="Fig 4.6"
+                                />
+                                <p>{t.sections.sorting.p5}</p>
+                                <p>{t.sections.sorting.p6}</p>
+                                <p><a href="https://www.bilibili.com/video/BV1uT4y1P7CX" target="_blank" rel="noopener noreferrer">{t.sections.sorting.link}</a></p>
+
+                                <ImageFigure
+                                    src="Generated Box UI Reverse Loader-min.webp"
+                                    caption={t.sections.sorting.caption7}
+                                    figNum="Fig 4.7"
+                                />
+                            </section>
+
+                            {/* Section 5: Control */}
+                            <section className="blog-section" id="section-5">
+                                <h2><span className="section-num">5</span>{t.sections.control.title}</h2>
+                                <ImageFigure
+                                    src="图5 控制面板.png"
+                                    caption={t.sections.control.caption1}
+                                    figNum="Fig 5"
+                                />
+
+                                <p>{t.sections.control.p1}</p>
+
+                                <div className="blog-subsections">
+                                    {t.sections.control.items.map((item: any, i: number) => (
+                                        <div key={i} className="blog-subsection" id={`section-5-${i + 1}`}>
+                                            <h3>{item.title}</h3>
+                                            {item.topImages && item.topImages.length > 0 && (
+                                                <div className="blog-images-vertical">
+                                                    {item.topImages.map((img: any, j: number) => (
+                                                        <ImageFigure
+                                                            key={`top-${j}`}
+                                                            src={img.src}
+                                                            caption={img.caption}
+                                                            figNum=""
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {Array.isArray(item.desc) ? (
+                                                item.desc.map((paragraph: string, idx: number) => (
+                                                    <p key={idx}>{paragraph}</p>
+                                                ))
+                                            ) : (
+                                                <p>{item.desc}</p>
+                                            )}
+
+                                            {item.images && item.images.length > 0 && (
+                                                <div className="blog-images-vertical">
+                                                    {item.images.map((img: any, j: number) => (
+                                                        <ImageFigure
+                                                            key={j}
+                                                            src={img.src}
+                                                            caption={img.caption}
+                                                            figNum=""
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {item.qna && (
+                                                <div className="blog-qna">
+                                                    <p className="qna-question"><strong>{item.qna.question}</strong></p>
+                                                    <p className="qna-answer">{item.qna.answer}</p>
+                                                </div>
+                                            )}
+
+                                            {item.bottomImages && item.bottomImages.length > 0 && (
+                                                <div className="blog-images-vertical">
+                                                    {item.bottomImages.map((img: any, j: number) => (
+                                                        <ImageFigure
+                                                            key={`bottom-${j}`}
+                                                            src={img.src}
+                                                            caption={img.caption}
+                                                            figNum=""
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+
+                            {/* Section 6: Process Management */}
+                            <section className="blog-section" id="section-6">
+                                <h2><span className="section-num">6</span>{t.sections.process.title}</h2>
+                                <ImageFigure
+                                    src="Process Manager (Priority Queue Based)-min.webp"
+                                    caption={t.sections.process.caption}
+                                    figNum="Fig 6.1"
+                                />
+                                <p>{t.sections.process.p1}</p>
+                                <p>{t.sections.process.p2}</p>
+                            </section>
+
+                            {/* Section 7: Display */}
+                            <section className="blog-section" id="section-7">
+                                <h2><span className="section-num">7</span>{t.sections.display.title}</h2>
+
+                                <div className="blog-image-grid">
+                                    <ImageFigure
+                                        src="图7.1 地狱显示器(左 历史对局  右 当前对局).png"
+                                        caption={t.sections.display.captions[0]}
+                                        figNum="Fig 7.1"
+                                    />
+                                    <ImageFigure
+                                        src="Modular Display Unit-min.webp"
+                                        caption={t.sections.display.captions[1]}
+                                        figNum="Fig 7.2"
+                                    />
+                                    <ImageFigure
+                                        src="Low-Latency Comparator Chain Unit-min.webp"
+                                        caption={t.sections.display.captions[4]}
+                                        figNum="Fig 7.3"
+                                    />
+                                    <ImageFigure
+                                        src="Latency-Free Analog Downlink (BED Encoded)-min.webp"
+                                        caption={t.sections.display.captions[5]}
+                                        figNum="Fig 7.4"
+                                    />
+                                </div>
+
+                                <h3>{t.sections.display.h3}</h3>
+                                <p>{t.sections.display.p1}</p>
+                            </section>
+
+                            {/* Section 8: Overworld */}
+                            <section className="blog-section" id="section-8">
+                                <h2><span className="section-num">8</span>{t.sections.overworld.title}</h2>
+                                <ImageFigure
+                                    src="图8.1 起点UI.png"
+                                    caption={t.sections.overworld.caption1}
+                                    figNum="Fig 8.1"
+                                />
+                                <ImageFigure
+                                    src="图8.2 key.png"
+                                    caption={t.sections.overworld.caption2}
+                                    figNum="Fig 8.2"
+                                />
+                                <ImageFigure
+                                    src="图8.3 终点.png"
+                                    caption={t.sections.overworld.caption3}
+                                    figNum="Fig 8.3"
+                                />
+                                <ImageFigure
+                                    src="图8.4 瞬投与船分离.png"
+                                    caption={t.sections.overworld.caption4}
+                                    figNum="Fig 8.4"
+                                />
+                            </section>
+
+                            {/* Appendix */}
+                            <section className="blog-section" id="section-appendix">
+                                <h2>{t.sections.appendix.title}</h2>
+                                <div className="blog-image-grid">
+                                    {t.sections.appendix.images.map((img, i) => (
+                                        <ImageFigure
+                                            key={i}
+                                            src={img.src}
+                                            caption={img.caption}
+                                            figNum=""
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+
+
+
+                            {/* Credits */}
+                            <section className="blog-section blog-credits" id="section-9">
+                                <h2><span className="section-num">9</span>{t.sections.credits.title}</h2>
+                                <div className="credits-grid">
+                                    <div>
+                                        <h4>{t.sections.credits.building}</h4>
+                                        <p>XiaoYu2021, JeadTW</p>
+                                    </div>
+                                    <div>
+                                        <h4>{t.sections.credits.redstone}</h4>
+                                        <p>Yi_Breeze, Nechnaw, ScLim</p>
+                                    </div>
+                                    <div>
+                                        <h4>{t.sections.credits.thanks}</h4>
+                                        <p>FlandreLed, redberd, TNT Archive Discord, camphorwood</p>
+                                    </div>
+                                </div>
+                                <p className="blog-footer-note">
+                                    {t.sections.credits.original} <a href="https://www.bilibili.com/opus/979335200181846024" target="_blank" rel="noopener noreferrer">Bilibili</a>
+                                </p>
+                                <a
+                                    href="https://www.bilibili.com/opus/979335200181846024"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="blog-learn-more"
+                                >
+                                    {t.learnMore} <span className="cta-arrow">▷</span>
+                                </a>
+                            </section>
                         </div>
-                    </section>
-
-
-
-                    {/* Credits */}
-                    <section className="blog-section blog-credits" id="section-9">
-                        <h2><span className="section-num">9</span>{t.sections.credits.title}</h2>
-                        <div className="credits-grid">
-                            <div>
-                                <h4>{t.sections.credits.building}</h4>
-                                <p>XiaoYu2021, JeadTW</p>
-                            </div>
-                            <div>
-                                <h4>{t.sections.credits.redstone}</h4>
-                                <p>Yi_Breeze, Nechnaw, ScLim</p>
-                            </div>
-                            <div>
-                                <h4>{t.sections.credits.thanks}</h4>
-                                <p>FlandreLed, redberd, TNT Archive Discord, camphorwood</p>
-                            </div>
-                        </div>
-                        <p className="blog-footer-note">
-                            {t.sections.credits.original} <a href="https://www.bilibili.com/opus/979335200181846024" target="_blank" rel="noopener noreferrer">Bilibili</a>
-                        </p>
-                        <a
-                            href="https://www.bilibili.com/opus/979335200181846024"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="blog-learn-more"
-                        >
-                            {t.learnMore} <span className="cta-arrow">▷</span>
-                        </a>
-                    </section>
+                    </div>
                 </article>
-            </main >
+            </main>
             <Footer />
         </>
     );

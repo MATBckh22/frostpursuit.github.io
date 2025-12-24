@@ -3178,7 +3178,7 @@ ul {
 }
 
 .blog-article {
-    max-width: 900px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 var(--space-md) var(--space-xl);
 }
@@ -3303,7 +3303,7 @@ ul {
 
 /* Blog Hero */
 .blog-hero {
-    text-align: center;
+    text-align: left;
     padding: var(--space-xl) 0 var(--space-lg);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: var(--space-lg);
@@ -3334,15 +3334,15 @@ ul {
 .blog-subtitle {
     font-size: 1.15rem;
     color: rgba(255, 255, 255, 0.7);
-    max-width: 600px;
-    margin: 0 auto var(--space-md);
+    max-width: 100%;
+    margin: 0 0 var(--space-md);
     line-height: 1.6;
 }
 
 .blog-meta {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.75rem;
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.5);
@@ -3430,13 +3430,13 @@ ul {
 
 .blog-section p {
     color: rgba(255, 255, 255, 0.85);
-    font-size: 1rem;
+    font-size: 1.15rem;
     line-height: 1.8;
     margin-bottom: var(--space-sm);
 }
 
 .blog-lead {
-    font-size: 1.15rem !important;
+    font-size: 1.3rem !important;
     color: rgba(255, 255, 255, 0.9) !important;
     border-left: 3px solid #c41e3a;
     padding-left: var(--space-sm);
@@ -3475,6 +3475,13 @@ ul {
 .blog-image-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-md);
+    margin: var(--space-md) 0;
+}
+
+.blog-images-vertical {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-md);
     margin: var(--space-md) 0;
 }
@@ -3536,6 +3543,7 @@ ul {
     padding-left: 1.5rem;
     margin: 0.75rem 0;
     color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
     line-height: 1.6;
 }
 
@@ -3577,6 +3585,7 @@ ul {
 
 .blog-step>div {
     color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
     line-height: 1.6;
 }
 
@@ -3603,9 +3612,32 @@ ul {
 }
 
 .blog-card p {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: rgba(255, 255, 255, 0.7);
     margin: 0;
+}
+
+/* Subsections */
+.blog-subsection {
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.blog-subsection:last-child {
+    border-bottom: none;
+}
+
+.blog-subsection h3 {
+    font-size: 1.4rem;
+    color: #ffb3b3;
+    margin-bottom: var(--space-sm);
+}
+
+.blog-subsection p {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--space-md);
 }
 
 /* Credits */
@@ -3915,5 +3947,169 @@ ul {
 
     .carousel-next {
         order: 2;
+    }
+}
+
+/* Blog Q&A Section */
+.blog-qna {
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid #c41e3a;
+    border-radius: 4px;
+}
+
+.qna-question {
+    color: #ffb3b3;
+    margin-bottom: var(--space-sm);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.qna-answer {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+/* ============================================
+   Blog Sidebar & Sticky TOC
+   ============================================ */
+.blog-container {
+    display: grid;
+    grid-template-columns: 1fr min(900px, 100%) 1fr;
+    gap: var(--space-xl);
+    max-width: 100%;
+    margin: 0;
+    padding: 0 var(--space-md);
+    position: relative;
+}
+
+.blog-sidebar {
+    grid-column: 1;
+    width: auto;
+    display: none;
+    /* Hidden on mobile by default */
+    justify-content: flex-end;
+}
+
+.blog-content-wrapper {
+    grid-column: 2;
+    flex: 1;
+    min-width: 0;
+    /* Prevent flex item from overflowing */
+    width: 100%;
+    margin: 0 auto;
+    /* Center the content */
+}
+
+.sticky-toc {
+    position: sticky;
+    top: 100px;
+    /* Adjust based on navbar height */
+    padding: var(--space-md);
+    background: transparent;
+    border-right: none;
+    border-radius: 0;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    width: 250px;
+    /* Fixed width for the TOC content */
+    margin-left: auto;
+    /* Push to the right side of the left column */
+    margin-top: 2.5rem;
+    /* Align with title height */
+}
+
+.sticky-toc h3 {
+    color: var(--frost-light);
+    font-size: 1.1rem;
+    margin-bottom: var(--space-md);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sticky-toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    /* Reduced from 0.5rem */
+}
+
+.sticky-toc li button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    /* Smaller font size as requested */
+    text-align: left;
+    cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
+    width: 100%;
+    line-height: 1.4;
+}
+
+.sticky-toc li button:hover {
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sticky-toc li button.active {
+    color: var(--white);
+    border-left-color: var(--redstone);
+    background: rgba(185, 60, 60, 0.3);
+    font-weight: 500;
+}
+
+/* Nested subsections in TOC */
+.toc-subsections {
+    list-style: none;
+    padding: 0;
+    margin: 0.25rem 0 0.25rem 1rem;
+    display: none;
+    /* Hidden by default */
+}
+
+.toc-subsections.open {
+    display: block;
+    /* Show when parent section is active */
+}
+
+.toc-subsections li button {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.toc-subsections li button:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.toc-subsections li button.active {
+    color: var(--white);
+    border-left-color: var(--redstone);
+    background: rgba(185, 60, 60, 0.25);
+}
+
+/* Hide original TOC on desktop if sidebar is visible */
+@media (min-width: 1024px) {
+    .blog-sidebar {
+        display: block;
+    }
+
+    .blog-toc {
+        display: none;
+    }
+
+    /* Increase Chinese Blog Title Size */
+    .lang-zh .blog-hero h1 {
+        font-size: 4.5rem;
+        /* Bigger than default */
     }
 }

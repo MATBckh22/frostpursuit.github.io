@@ -26,6 +26,52 @@ function ImageFigure({ src, caption, figNum }: ImageFigureProps) {
     );
 }
 
+// Carousel component for subsections
+interface SubsectionCarouselProps {
+    subsections: { title: string; desc: string }[];
+}
+
+function SubsectionCarousel({ subsections }: SubsectionCarouselProps) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const goToPrevious = () => {
+        setCurrentIndex((prev) => (prev === 0 ? subsections.length - 1 : prev - 1));
+    };
+
+    const goToNext = () => {
+        setCurrentIndex((prev) => (prev === subsections.length - 1 ? 0 : prev + 1));
+    };
+
+    if (!subsections || subsections.length === 0) return null;
+
+    return (
+        <div className="subsection-carousel">
+            <button className="carousel-btn carousel-prev" onClick={goToPrevious} aria-label="Previous">
+                ‹
+            </button>
+            <div className="carousel-content">
+                <div className="carousel-card">
+                    <h4>{subsections[currentIndex].title}</h4>
+                    <p>{subsections[currentIndex].desc}</p>
+                </div>
+                <div className="carousel-indicators">
+                    {subsections.map((_, idx) => (
+                        <button
+                            key={idx}
+                            className={`carousel-dot ${idx === currentIndex ? 'active' : ''}`}
+                            onClick={() => setCurrentIndex(idx)}
+                            aria-label={`Go to slide ${idx + 1}`}
+                        />
+                    ))}
+                </div>
+            </div>
+            <button className="carousel-btn carousel-next" onClick={goToNext} aria-label="Next">
+                ›
+            </button>
+        </div>
+    );
+}
+
 // Helper function to wrap symbols like () and * in spans with Inter font
 function renderWithSymbols(text: string) {
     // Split on symbols, keeping the delimiters
@@ -84,10 +130,14 @@ const content = {
                 caption1: 'Fig 3.1.1 Three-layer timer + shift registers ×10',
                 h31: '3.1 Timer Overview',
                 p1: 'The green-outlined portion in the diagram is the timer; the stacked extension is the shift register, capable of storing 10 pieces of information for later player decisions about inserting into the sorting algorithm (3-digit analog signal + ID card). The top-right end is the output section, which sequentially reads register signals and sends them to the current match display. Stored information is automatically cleared when the next race starts. The timer has three layers: from top to bottom, minutes, seconds (tens digit), and seconds (ones digit)—a 3-digit analog signal. For example, 7 2 1 represents 7 minutes 21 seconds.',
+                p1b: 'On this basis, every time an ID card passes the whitelist check at the Non-Initial Race UI, it is sent here for a reading. The ID card is shift-registered alongside its corresponding 3-digit analog signal, while simultaneously outputting this signal to the current match display—until 10 signals are collected.',
                 caption2: 'Fig 3.1.2 3-Digit Analog Signal (14 min 03 sec)',
                 h32: '3.2 Carry Rules',
                 p2: 'To ensure every second can be captured, the three analog signals must carry synchronously. Example: 0 5 9\'s next value is 1 0 0—the timer must ensure all three digits change simultaneously. This is complex in-game, so we modified the carry rule: 0 5 9 → 20gt → 0 5 10 → 20gt → 0 6 1 → 18gt → 1 0 1 → 2gt → 1 0 2. From 59 seconds → 60 seconds → 61 seconds (1:01) → 61 seconds (1:01) → 62 seconds (1:02).',
                 p3: 'During this process, when the ones digit goes from 9 to 10, it triggers a carry. After a 20gt delay, the tens and ones digits simultaneously become 6 and 1. At this point, the tens digit changing from 5 to 6 triggers another carry, and all three respond together. After 18gt it becomes 1 0 1 = 0 6 1, then after 2gt becomes 1 0 2, still satisfying the 20gt (1 second) transition from 61 to 62 seconds. Essentially, by modifying the carry rules, we provide enough in-game delay time for judgment during carries, achieving per-second accurate readings without modifying the original timer. However, this means data needs processing before the display can read it—this component is called the "carry processor" (green section in the overview).',
+                h33: '3.3 Carry Processor',
+                p4: 'The carry processor converts the 3-digit analog signal processed by the system into display-readable signals. For example: 9 5 10 corresponds to 10 minutes exactly. After passing through the carry processor, it becomes a 4-digit signal: 2 1 1 1 (where 10 = 0 + 1 each digit), so the display shows 10:00.',
+                p4b: 'BTW, the final carry processor is not on the left side of the register in the overview—it\'s placed at the display\'s input (Fig 3.3.2).',
                 caption3: 'Fig 3.3.1 Carry Processor: Converts the 3-digit analog signal processed by the system into display-readable signals',
                 caption4: 'Fig 3.3.2 Carry Processor Location'
             },
@@ -126,6 +176,24 @@ const content = {
                     {
                         title: '5.1 Query Input (Overworld Query)',
                         desc: 'The query input is located in the Overworld. Players can input the ID of the player they want to query. The system will then search for the player\'s data in the database and display it on the Overworld display.',
+                        subsections: [
+                            {
+                                title: '5.1.1 Overworld UI',
+                                desc: 'The Overworld UI box displays historical player ID rankings from the insertion sort, with the sync operation introducing automatic updates later. On the right side, the lectern, note block, and redstone lamp serve as query controls. The query operation enables searching for player rankings within the insertion sort in the Overworld—displaying times from the full 10-hour-capable display for results. Since a large enough display for 10 records isn\'t feasible in the Overworld, a single query display is provided instead (Fig 5.1.9).'
+                            },
+                            {
+                                title: '5.1.2 Query Controls',
+                                desc: 'The lectern selects ranks 1-10 within the insertion sort. The note block confirms input, and the redstone lamp indicates operation status, preventing multiple inputs.'
+                            },
+                            {
+                                title: '5.1.3 Cross-Dimension Signal Transfer',
+                                desc: 'When players send ranking info, a shulker box filled with scissors is placed in the Overworld (Fig 5.1.3) for cross-dimension analog signal transfer (1-10). This is sent to the Nether insertion sort query input (Fig 5.1.4). The control panel\'s corresponding light illuminates. After the query completes (or times out with loading), the extracted 3-digit analog signal passes through the carry processor, converts via the analog-to-7-segment display-to-binary converter (Fig 5.1.5), outputs 23-bit binary encoded as non-stackable water bottles (Fig 5.1.6), transmits to the Overworld, decodes at the Overworld decoder (Fig 5.1.7), and outputs the 23-bit binary signal to the dedicated Overworld display (Fig 5.1.8, Fig 5.1.9) to read and show the time.'
+                            },
+                            {
+                                title: '5.1.4 Why Cross-Dimension Transmission?',
+                                desc: 'Why use this method for cross-dimension signal transfer? Can\'t we just send the analog signal directly to display the time after querying? Of course we could—but the main prerequisite is having space in the Overworld for a 7-segment display. As seen in Fig 5.1.10, the cabin atop the mountain has almost no space for a 7-segment display. Even the compact display in Fig 5.1.8 barely fits. So we designed this query system to adapt to the map. This way, the Overworld only needs to house the components from Fig 5.1.7 and Fig 5.1.8. Moreover, because binary signal transmission is very simple, the component in Fig 5.1.7 has almost no position requirements—it can be placed anywhere it fits. Admittedly, this transmission method takes more time, but even the fastest method isn\'t much faster. Real-time queries are inherently difficult. The display here mainly serves to show historical match rankings in the Overworld, rather than real-time queries.'
+                            }
+                        ],
                         images: [
                             { src: '图5.1.1 查询指示灯.png', caption: 'Fig 5.1.1 Query Indicator Light' },
                             { src: '图5.1.2 主世界UI.png', caption: 'Fig 5.1.2 Overworld UI' },
@@ -263,10 +331,14 @@ const content = {
                 caption1: '圖3.1.1 三層計時器+三層移位寄存器×10',
                 h31: '3.1 計時器概覽',
                 p1: '圖示綠色框出的部分為計時器，後續延伸的堆疊部分為移位寄存器，共能儲存10個信息，用於後續玩家判斷是否輸入插入排序算法（三位模電信號與ID卡）。右上末端為輸出部分，用於依次讀取寄存器內的信號並發送到當前對局顯示器上，信息儲存到下一次比賽開始後自動清除。計時器分為三層，從上至下依次為分、秒十位、秒個位，即三位模電信號。舉個例子，7 2 1 即代表7分21秒。',
+                p1b: '在此基礎上，每當終點有一個ID卡經過非初次比賽UI的白名單檢查後，ID卡會送到此處進行一次取數，並將ID卡與三位模電信號對應移位，同時讀取此模電信號輸出到當前對局顯示器，直到取滿10個信號。',
                 caption2: '圖3.1.2 三位模電信號(14分03秒)',
                 h32: '3.2 進位規則',
                 p2: '為保證計時器的每一秒都能夠被取到，要做到三位模電信號的進位過程同步。例：0 5 9下一個數為1 0 0，計時器需要保證這三個數的變化同時出現。但在遊戲中完成這個步驟會比較複雜，於是將進位規則簡單改一下：0 5 9→20gt→0 5 10→20gt→0 6 1→18gt→1 0 1→2gt→1 0 2。59秒→60秒→61秒（1分01秒）→61秒（1分01秒）→62秒（1分02秒）。',
                 p3: '在這過程中，秒個位從9到10，觸發進位，延時20gt後，秒十位和秒個位同時變為6和1。此時秒十位從5變為6，觸發進位，三位同時響應，延時18gt後變為1 0 1=0 6 1，再過2gt後變為1 0 2，仍然滿足20gt（1秒）後從61秒到62秒的變化。本質上是通過改變進位規則在進位時給足了遊戲內延時的判斷時間，在不需要更改原本計時器的同時完成精確到每一秒的讀取操作。但這樣做數據就需要加工過才能夠被顯示器讀取，這個部件在最開始的俯視圖中綠色部分被稱為進位器。',
+                h33: '3.3 進位器',
+                p4: '將系統中處理的三位模電信號轉換為顯示器可讀的信號。例如：9 5 10 對應時間為10分整，經過進位器後將變為2 1 1 1的四位信號（即10 0 0每一位+1），顯示器會將2 1 1 1顯示為10:00。',
+                p4b: 'btw 最後進位器並不在俯視圖內寄存器的左側，而是放在了顯示器的輸入口（圖3.3.2）',
                 caption3: '圖3.3.1 進位器：將系統中處理的三位模電信號轉換為顯示器可讀的信號',
                 caption4: '圖3.3.2 進位器位置'
             },
@@ -305,6 +377,24 @@ const content = {
                     {
                         title: '5.1 查詢 輸入（主世界查詢）',
                         desc: '查詢輸入位於主世界。玩家可以輸入想要查詢的玩家ID。系統隨後會在數據庫中搜索該玩家的數據，並將其顯示在主世界顯示器上。',
+                        subsections: [
+                            {
+                                title: '5.1.1 主世界UI',
+                                desc: '主世界UI的盒子UI用於顯示插入排序中歷史對局的玩家ID排名，在後續介紹的同步操作後自動同步。右側講台、音符盒、紅石燈則為查詢的面板。查詢操作是為了在主世界能夠查詢插入排序中的三位模電信號，即時間成績。由於主世界並不適合放置一個巨大的能夠顯示10個時間的顯示器，所以放一個顯示器在主世界用於查詢（圖5.1.9）。'
+                            },
+                            {
+                                title: '5.1.2 查詢控制',
+                                desc: '講台用於選取1~10在插入排序中的不同排名。音符盒用於確認輸入，紅石燈為運行指示，並防止多次輸入。'
+                            },
+                            {
+                                title: '5.1.3 跨維度信號傳輸',
+                                desc: '當玩家發送排名信息後，主世界會裝填一個由剪刀填充的潛影盒（圖5.1.3）用來跨維度傳輸模電信號(1~10)，並發送到地獄端插入排序中查詢輸入的位置（圖5.1.4）。同時控制面板對應的燈亮起。查詢完畢後熄滅（加載則會持續一段時間）。取出的三位模電信號經過進位器後，轉換的信號輸入模轉七段數碼管轉二進制（圖5.1.5），輸出的23bit二進制信號再轉換為由不可堆疊與水瓶組成的編碼盒（圖5.1.6）後傳輸到主世界，主世界解碼（圖5.1.7）後輸出23bit的二進制信號給專用的顯示器（圖5.1.8 圖5.1.9）讀取並顯示時間。'
+                            },
+                            {
+                                title: '5.1.4 為什麼要跨維度傳輸？',
+                                desc: '為什麼要用這樣的方式跨維度傳輸信號呢？查詢後直接發送對應模電信號顯示時間不行嗎？當然可以，但這一切的大前提是主世界有空間放置七段數碼管的顯示器。從圖5.1.10中可以看出，山頂的小屋下幾乎沒有空間能夠放置帶七段數碼管的顯示器了。即使是圖5.1.8的小體積顯示器也只是堪堪放下。於是我們設計了這一套查詢系統來適配地圖。這樣一來，主世界就只需要放置圖5.1.7與圖5.1.8的部件即可。並且因為二進制信號的傳輸方式十分簡單，圖5.1.7的部件對位置幾乎沒有要求，可以塞在任意能塞得下的地方。誠然，這樣的傳輸方式會消耗更多的時間，但即使是最快的方式也並沒有比這種方式快多少。實時查詢本身就十分困難，這裡的顯示器更多起到的是在主世界顯示歷史對局排行榜時間的作用，而不是實時查詢。'
+                            }
+                        ],
                         images: [
                             { src: '图5.1.1 查询指示灯.png', caption: '圖5.1.1 查詢指示燈' },
                             { src: '图5.1.2 主世界UI.png', caption: '圖5.1.2 主世界UI' },
@@ -523,6 +613,7 @@ export function RedstoneBlog() {
 
                         <h3>{t.sections.timer.h31}</h3>
                         <p>{t.sections.timer.p1}</p>
+                        <p>{t.sections.timer.p1b}</p>
                         <ImageFigure
                             src="图3.1.2 三位模电信号(14分03秒).png"
                             caption={t.sections.timer.caption2}
@@ -536,6 +627,10 @@ export function RedstoneBlog() {
      ↑ 20gt delay        ↑ simultaneous update`}
                         </pre>
                         <p>{t.sections.timer.p3}</p>
+
+                        <h3>{t.sections.timer.h33}</h3>
+                        <p>{t.sections.timer.p4}</p>
+                        <p>{t.sections.timer.p4b}</p>
 
                         <ImageFigure
                             src="Analog-7 Segment Display-Binary Converter-min.webp"
@@ -630,13 +725,16 @@ export function RedstoneBlog() {
                         <p>{t.sections.control.p1}</p>
 
                         <div className="blog-subsections">
-                            {t.sections.control.items.map((item, i) => (
+                            {t.sections.control.items.map((item: any, i: number) => (
                                 <div className="blog-subsection" key={i}>
                                     <h3>{item.title}</h3>
                                     <p>{item.desc}</p>
+                                    {item.subsections && item.subsections.length > 0 && (
+                                        <SubsectionCarousel subsections={item.subsections} />
+                                    )}
                                     {item.images && item.images.length > 0 && (
                                         <div className="blog-image-grid">
-                                            {item.images.map((img, j) => (
+                                            {item.images.map((img: any, j: number) => (
                                                 <ImageFigure
                                                     key={j}
                                                     src={img.src}

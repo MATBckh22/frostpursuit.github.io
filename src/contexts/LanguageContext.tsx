@@ -269,7 +269,7 @@ export const translations = {
         },
         // Redstone Section
         redstone: {
-            sectionTitle: '深入',
+            sectionTitle: '引进',
             technicalWord: '技術',
             subtitle: '由紅石驅動',
             belief: '我們的地圖完全由紅石驅動。無模組、無命令方塊，體驗純原版競速。',

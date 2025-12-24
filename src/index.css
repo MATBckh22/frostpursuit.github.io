@@ -3797,3 +3797,123 @@ ul {
 [data-lang="zh"] .footer-links a {
     font-family: 'Noto Sans TC', 'Noto Sans', sans-serif !important;
 }
+
+/* ============================================
+   Subsection Carousel Styles
+   ============================================ */
+.subsection-carousel {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-sm);
+    margin: var(--space-md) 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.carousel-btn {
+    flex-shrink: 0;
+    width: 48px;
+    height: 100%;
+    min-height: 120px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--white);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--frost-light);
+    color: var(--frost-light);
+}
+
+.carousel-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.carousel-card {
+    flex: 1;
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+}
+
+.carousel-card h4 {
+    color: var(--frost-light);
+    font-size: 1.1rem;
+    margin-bottom: var(--space-sm);
+    font-weight: 600;
+}
+
+.carousel-card p {
+    color: var(--grey-light);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.carousel-dot.active {
+    background: var(--frost-light);
+    transform: scale(1.2);
+}
+
+/* Mobile responsive carousel */
+@media (max-width: 768px) {
+    .subsection-carousel {
+        flex-direction: column;
+        padding: var(--space-sm);
+    }
+
+    .carousel-btn {
+        width: 100%;
+        height: auto;
+        min-height: 44px;
+        font-size: 1.5rem;
+    }
+
+    .carousel-prev {
+        order: 0;
+    }
+
+    .carousel-content {
+        order: 1;
+    }
+
+    .carousel-next {
+        order: 2;
+    }
+}

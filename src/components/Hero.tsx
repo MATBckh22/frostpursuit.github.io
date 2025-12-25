@@ -12,7 +12,7 @@ const CELL_SIZE = 50; // Fixed 50x50 pixel squares
 const HOTSPOTS = [
     { id: 'spectator-loft', top: 0.40, left: 0.27, width: 0.25, height: 0.25 },
     { id: 'main-lounge', top: 0.21, left: 0.495, width: 0.20, height: 0.20 },
-    { id: 'cable-car', top: 0.85, left: 0.75, width: 0.15, height: 0.20 },
+    { id: 'cable-car', top: 0.70, left: 0.75, width: 0.15, height: 0.20 },
 ];
 
 export function Hero({

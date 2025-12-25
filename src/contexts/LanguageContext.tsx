@@ -203,7 +203,7 @@ export const translations = {
         hero: {
             titleLine1: '冰寒',
             titleLine2: '追霜',
-            subtitle: '突破极限的<br />冰船赛道',
+            subtitle: '突破極限的<br />冰船賽道',
             cta: '下載地圖',
             loading: '正在載入冰寒追霜...',
             hotspots: {
@@ -219,7 +219,7 @@ export const translations = {
             blocks: '方塊',
             footnote: '*已針對SMP調整',
             viewIsometric: '等距視圖',
-            viewNoBalloons: '無氣球',
+            viewNoBalloons: '無熱氣球',
             viewTopDown: '俯視圖',
             blockNames: {
                 'Packed Ice': '浮冰',
@@ -227,7 +227,7 @@ export const translations = {
                 'Light Blue Concrete Powder': '淺藍色混凝土粉末',
                 'Stone': '石頭',
                 'Acacia Log': '相思木原木',
-                'Tuff': '凝灰�ite',
+                'Tuff': '凝灰岩',
                 'Snow': '雪',
                 'Barrier': '屏障',
                 'Deepslate': '深板岩',
@@ -237,7 +237,7 @@ export const translations = {
         // Map Highlights
         highlights: {
             sectionTitle: '地圖亮點',
-            sectionSubtitle: '遊戲內截圖',
+            sectionSubtitle: '遊戲截圖',
             dayMode: '日間',
             nightMode: '夜間',
             cards: {
@@ -269,10 +269,10 @@ export const translations = {
         },
         // Redstone Section
         redstone: {
-            sectionTitle: '引进',
+            sectionTitle: '引進',
             technicalWord: '技術',
             subtitle: '由紅石驅動',
-            belief: '我們的地圖完全由紅石驅動。無模組、無命令方塊，體驗純原版競速。',
+            belief: '我們的地圖完全由紅石驅動。無模組、無指令方塊，體驗純原版競速。',
             learnMore: '了解更多',
             items: {
                 'Overview': {

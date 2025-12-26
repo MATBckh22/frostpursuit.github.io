@@ -247,7 +247,7 @@ export const translations = {
                 },
                 'main-lounge': {
                     title: '主大廳',
-                    description: '温馨的聚會空間，供玩家在比賽間歇放髆和社交。'
+                    description: '溫馨的聚會空間，供玩家在比賽間歇放鬆和社交。'
                 },
                 'spectator-loft': {
                     title: '觀眾席',

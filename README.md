@@ -1,6 +1,6 @@
 # Frost Pursuit 冰寒追霜
 
-A stunning promotional website for **Frost Pursuit**, an ultimate ice boat racing map built entirely in vanilla Minecraft.
+A project website for **Frost Pursuit**, an ultimate ice boat racing map built entirely in vanilla Minecraft.
 
 🌐 **Live Site**: [frostpursuit.github.io](https://frostpursuit.github.io)
 

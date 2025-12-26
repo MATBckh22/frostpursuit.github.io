@@ -113,11 +113,11 @@ export const translations = {
                 },
                 '3-Layer Timer with Shift Registers': {
                     label: '3-Layer Timer with Shift Registers',
-                    description: 'A high-precision clock down to the seconds. Uses synchronous carry logic to prevent display ghosting.'
+                    description: 'A high-precision clock down to the seconds. Uses synchronous carry logic to avoid timing inconsistencies.'
                 },
-                '3-bit Adder': {
-                    label: '3-bit Adder',
-                    description: 'A logic component used within the timer and calculation modules to handle binary additions and signal processing.'
+                'Carry Processor': {
+                    label: 'Carry Processor',
+                    description: 'Converts stored complement codes into signals compatible with the 7-segment display units.'
                 },
                 'Insertion Sort Module': {
                     label: 'Insertion Sort Module',
@@ -155,8 +155,8 @@ export const translations = {
                     label: '10-item Simple Reverser',
                     description: 'A utility module that reverses item streams, used for organizing data or resetting system states.'
                 },
-                'Process Manager (Priority Queue Based)': {
-                    label: 'Process Manager (Priority Queue Based)',
+                'Priority Manager': {
+                    label: 'Priority Manager',
                     description: 'Prevents logic conflicts by queuing tasks like queries, inputs, and syncs, ensuring only one runs at a time.'
                 },
                 'Modular Display Unit': {
@@ -165,7 +165,7 @@ export const translations = {
                 },
                 'Low-Latency Comparator Chain Unit': {
                     label: 'Low-Latency Comparator Chain Unit',
-                    description: 'Uses comparator logic to transmit analog signals instantly over vertical distances, bypassing standard redstone delay.'
+                    description: 'Uses comparator logic to transmit analog signals at 200 Blocks per Second (BPS) over horizontal distances, bypassing standard redstone delay.'
                 },
                 'Latency-Free Analog Downlink (BED Encoded)': {
                     label: 'Latency-Free Analog Downlink (BED Encoded)',
@@ -295,8 +295,8 @@ export const translations = {
                     label: '三層計時器+移位寄存器',
                     description: '精確到秒的高精度時鐘。使用同步進位邏輯防止顯示殘影。'
                 },
-                '3-bit Adder': {
-                    label: '三位加法器',
+                'Carry Processor': {
+                    label: '進位器',
                     description: '計時器和計算模塊中使用的邏輯組件，處理二進制加法和信號處理。'
                 },
                 'Insertion Sort Module': {
@@ -335,7 +335,7 @@ export const translations = {
                     label: '10物品簡單逆序器',
                     description: '用於逆序物品流的實用模塊，用於組織數據或重置系統狀態。'
                 },
-                'Process Manager (Priority Queue Based)': {
+                'Priority Manager': {
                     label: '進程管理器（基於優先級隊列）',
                     description: '通過隊列管理查詢、輸入和同步等任務來防止邏輯衝突，確保同時只運行一個任務。'
                 },

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface BlockStat {
     count: string;
@@ -22,6 +23,7 @@ const blockStats: BlockStat[] = [
 type ViewMode = 'isometric' | 'no-balloons' | 'top-down';
 
 export function MapShowcase() {
+    const { t } = useLanguage();
     const [viewMode, setViewMode] = useState<ViewMode>('isometric');
 
     return (
@@ -29,9 +31,9 @@ export function MapShowcase() {
             <div className="container">
                 {/* Total Count - Centered */}
                 <div className="block-stats-total">
-                    <span className="total-count">7.5<sup className="asterisk">*</sup> MILLION</span>
-                    <span className="total-label">BLOCKS</span>
-                    <span className="total-footnote">*Adjusted for SMP</span>
+                    <span className="total-count">{t.showcase.totalCount}<sup className="asterisk">*</sup> {t.showcase.million}</span>
+                    <span className="total-label">{t.showcase.blocks}</span>
+                    <span className="total-footnote">{t.showcase.footnote}</span>
                 </div>
 
                 {/* Block Stats Carousel - Infinite Scroll */}
@@ -41,7 +43,7 @@ export function MapShowcase() {
                         {[...blockStats, ...blockStats].map((block, index) => (
                             <div key={`${block.name}-${index}`} className="block-stat-item">
                                 <img src={block.image} alt={block.name} className="block-icon" />
-                                <span className="block-name">{block.name}</span>
+                                <span className="block-name">{t.showcase.blockNames[block.name as keyof typeof t.showcase.blockNames] || block.name}</span>
                                 <span className="block-count">{block.count}</span>
                             </div>
                         ))}
@@ -54,19 +56,19 @@ export function MapShowcase() {
                         className={`view-btn ${viewMode === 'isometric' ? 'active' : ''}`}
                         onClick={() => setViewMode('isometric')}
                     >
-                        Isometric
+                        {t.showcase.viewIsometric}
                     </button>
                     <button
                         className={`view-btn ${viewMode === 'no-balloons' ? 'active' : ''}`}
                         onClick={() => setViewMode('no-balloons')}
                     >
-                        No Balloons
+                        {t.showcase.viewNoBalloons}
                     </button>
                     <button
                         className={`view-btn ${viewMode === 'top-down' ? 'active' : ''}`}
                         onClick={() => setViewMode('top-down')}
                     >
-                        Top Down
+                        {t.showcase.viewTopDown}
                     </button>
                 </div>
 
